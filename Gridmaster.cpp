@@ -4,8 +4,8 @@
 
 
 
-Font Gridmaster::monthfont={0,0,0,{0}};
-Font Gridmaster::dayfont={0,0,0,{0}};
+Font Gridmaster::monthfont;
+Font Gridmaster::dayfont;
 
 //********************************************************
 //  ⁡⁣⁢⁣Constructor⁡
@@ -209,7 +209,7 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
     if(!flag)
         contactedSquare=999;
     squarestr="BOX NUM: "+std::to_string(contactedSquare);
-    DrawTextEx(monthfont,squarestr.c_str(),Vector2{4*Hinterval+100,Vinterval+100},80,0,BLUE);
+    DrawTextEx(monthfont,squarestr.c_str(),Vector2{4*(float)Hinterval+100,(float)Vinterval+100},80,0,BLUE);
     
     if(contactedSquare!=999)
         DrawRectangleRec(dayGrid[contactedSquare].dayRect,Color{0,20,200,50});
