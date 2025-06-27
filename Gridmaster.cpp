@@ -4,8 +4,8 @@
 
 
 
-Font Gridmaster::monthfont={0};
-Font Gridmaster::dayfont={0};
+Font Gridmaster::monthfont={0,0,0,{0}};
+Font Gridmaster::dayfont={0,0,0,{0}};
 
 //********************************************************
 //  ⁡⁣⁢⁣Constructor⁡

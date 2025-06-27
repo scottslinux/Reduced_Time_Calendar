@@ -22,8 +22,8 @@ class Gridmaster
 
     private:
     std::vector<gridData> dayGrid;  //the master list of all grid squares..active or not
-    std::vector<std::string> monthNames;
     std::vector<std::string> weekdaynames;
+    std::vector<std::string> monthNames;
     static Font monthfont;  //staying with a static just because
     static Font dayfont;
 

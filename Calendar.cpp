@@ -96,7 +96,6 @@ bool Calendar::leapcheck(int year)
 {
  //find the first day of the month
     int daycounter=Calendar::DayfinderJan1(1,1,startingyear);  //start the count at the first of the month
-    int calendarIndex=0;
     CalendarData TempDay;
 
     CalendarData MonthMarker;
@@ -141,7 +140,7 @@ bool Calendar::leapcheck(int year)
 
     }
     //display the contents of the calendar vector for debugging purposes
-    for(int i=0;i<DAY.size();i++)
+    for(size_t i=0;i<DAY.size();i++)
         std::cout<<"day # "<<i<<".."<<daynames[DAY[i].dayofWeek]<<"\t"<<DAY[i].month<<"/"<<DAY[i].day<<
                                 "/"<<DAY[i].year<<"\n";
     
@@ -158,7 +157,6 @@ void Calendar::CalendarGrid(Calendar &myCal)     //
     int mnth=5;
 
     int firstpos;
-    int size=myCal.DAY.size();      //how many dates are in the vector
 
     std::cout<<"____________________________________________________\n";
     std::cout<<"\t\t"<<monthnames[mnth-1]<<" "<<DAY[0].year<<"\n";
@@ -207,9 +205,9 @@ void Calendar::MultiCalendarGrid(Calendar &myCal)     //
 {
 
     int currentNode=0;              //starting with the first node in the vector
-    int stopnode=myCal.DAY.size();  //the very last node in the list--time to stop
+    size_t stopnode=myCal.DAY.size();  //the very last node in the list--time to stop
 
-while (currentNode<stopnode)
+while (currentNode<static_cast<int>(stopnode))
 {
     if(myCal.DAY[currentNode].day==0)   //if the end of month is encountered. Go to next node.
         currentNode++;
