@@ -16,7 +16,7 @@ CXXFLAGS = -Wall -Wextra -g -std=c++14 -I$(RAYLIBINCLUDES)
 LDFLAGS = -L$(RAYLIB_LIBRARY) -lraylib -lbox2d -lm -ldl -lpthread -lrt -lX11 
 
 # Project name and target executable
-PROJECT_NAME= main
+PROJECT_NAME= ReducedTime
 TARGET = $(PROJECT_NAME)_bin  # Output binary name
 
 # Automatically include all .cpp files in the current directory
