@@ -105,9 +105,10 @@ bool Calendar::leapcheck(int year)
     MonthMarker.month=0;
     MonthMarker.year=0;
 
+    std::cout<<"ENTERING LOADCALENDAR() METHOD-------------------------------"<<std::endl;
 
-    for (int year=startingyear;year<=(startingyear+duration);year++)    //multi-year loop
-    {
+    int year=startingyear;
+
         //check for leap year
 
         if (leapcheck(year))
@@ -138,12 +139,12 @@ bool Calendar::leapcheck(int year)
         }
         
 
-    }
-    //display the contents of the calendar vector for debugging purposes
+    
+    /*display the contents of the calendar vector for debugging purposes
     for(size_t i=0;i<DAY.size();i++)
         std::cout<<"day # "<<i<<".."<<daynames[DAY[i].dayofWeek]<<"\t"<<DAY[i].month<<"/"<<DAY[i].day<<
                                 "/"<<DAY[i].year<<"\t"<<"Mullers day: "<<DAY[i].dayofWeek<<std::endl;
-    
+    */
 
     return;
 

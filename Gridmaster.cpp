@@ -29,25 +29,26 @@ Gridmaster::Gridmaster()
     Vinterval=monHeight/3;  //(vertical) height of month block
 
     boxCounter= 0;  //count all of the grid squares
-    
-     
+ 
+
     monthPosxy.x=0;
     monthPosxy.y=0;
 
-    //⁡⁢⁣⁣Create a  pointer on the stack with the actual object on the heap⁡
-    //⁡⁢⁣⁣stack is small..heap is all of memory⁡
-    //⁡⁢⁣⁣pointers use heap for object creation⁡ ⁡⁢⁣⁣otherwise stack smashing
+    //Create a  pointer on the stack with the actual object on the heap
+    //stack is small..heap is all of memory
+    //pointers use heap for object creation otherwise stack smashing
     
   
-    calendarYear=new Calendar();  //create the calendar object on the heap 
-    calendarYear->loadCalendar(2025,0);
+    //calendarYear=new Calendar();  //⁡⁣⁢⁣𝗰𝗿𝗲𝗮𝘁𝗲 𝘁𝗵𝗲 𝗰𝗮𝗹𝗲𝗻𝗱𝗮𝗿 𝗼𝗯𝗷𝗲𝗰𝘁 𝗼𝗻 𝘁𝗵𝗲 𝗵𝗲𝗮𝗽⁡ 
+    //calendarYear->loadCalendar(2025,0); //⁡⁣⁢⁣𝗹𝗼𝗮𝗱 𝘄𝗶𝘁𝗵 𝟮𝟬𝟮𝟱⁡
 
+    
     //intialize dayGrid using placeholder
 
     gridData placeholder;       //create a temp gridData item and use it to fill in default values
     placeholder.activeBox=false;
     placeholder.dayRect=Rectangle{0,0,0,0};
-    placeholder.dayValue=1;
+    placeholder.dayValue=0;
     placeholder.dayofweek=0;
     placeholder.month=0;
     placeholder.year=0;
@@ -64,8 +65,8 @@ Gridmaster::Gridmaster()
 //********************************************************
 Gridmaster::~Gridmaster()   //destructor Called Automatically by C++
 {
-    delete calendarYear;  // Clean up the dynamically allocated Calendar
-    calendarYear = nullptr; // Good practice to set to nullptr
+    //delete calendarYear;  // Clean up the dynamically allocated Calendar
+    //calendarYear = nullptr; // Good practice to set to nullptr
 }
 
 //********************************************************
@@ -102,13 +103,15 @@ void Gridmaster::DrawGrid()
     boxCounter=0;
     //draw all months
     for(int mnth=1;mnth<=12;mnth++)
-        DrawdayGrid(mnth);
+        DrawdayGrid(mnth);  //call to draw all day rectangles
 
+
+     
     return;
 
 }
 //*******************************************************/
-//      ⁡⁣⁢⁣Draw the day grid inside of the requested month⁡
+//      ⁡⁣⁢⁣𝗗𝗿𝗮𝘄 𝘁𝗵𝗲 𝗱𝗮𝘆 𝗴𝗿𝗶𝗱 𝗶𝗻𝘀𝗶𝗱𝗲 𝗼𝗳 𝘁𝗵𝗲 𝗿𝗲𝗾𝘂𝗲𝘀𝘁𝗲𝗱 𝗺𝗼𝗻𝘁𝗵⁡
 
 void Gridmaster::DrawdayGrid(int month)
 {
@@ -160,9 +163,14 @@ void Gridmaster::DrawdayGrid(int month)
 
         DrawRectangleLinesEx(currday,1,BLACK);         //draw grid squares for each day
 
+        std::string gridDate=std::to_string(dayGrid[boxCounter].dayValue);
+        DrawText(gridDate.c_str(),x+30,y+40,40,BLACK);
+
         //create numbering for each cell....0 to 419
         std::string cellNum=std::to_string(boxCounter++);  //increment boxCounter
         DrawText(cellNum.c_str(),x+20,y+10,20,BLACK);
+
+        
     }    
    }
     return;
@@ -247,12 +255,64 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
 //      ⁡⁣⁢⁣​‌‌‍𝕄𝔼ℝ𝔾𝔼 𝔾ℝ𝕀𝔻 𝔸ℕ𝔻 ℂ𝔸𝕃𝔼ℕ𝔻𝔸ℝ​⁡
 
 
-void Gridmaster::MergeGridwithCalendar(void)  //Generate Desired Year and Merge it
+void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year and Merge it
 {
     //use example 2025 -created in the constructor
 
-
     
+    std::cout<<"In the merge method within Gridmaster...pointer passed\n";
+
+
+
+
+    for(int i=0;i<=30;i++)
+    {
+        //Mullers has Sat as 0...we need Sun as 0 and Sat as 6 far right
+        //not altering actual Calendar object
+
+        int correctedDay=cal->DAY[i].dayofWeek;
+        if (correctedDay==0)
+            correctedDay=6;
+            else
+                correctedDay=correctedDay-1;
+
+        int monthoffset=(cal->DAY[i].month-1)*35;   //first square of every box
+                                                    //is mult of 35.  o, 35, 70...
+        
+        
+        int gridbox=monthoffset+ cal->DAY[i].day+3-1;
+        
+        dayGrid[gridbox].dayValue=cal->DAY[i].day;
+
+        std::cout<<cal->DAY[i].month<<" "<<cal->DAY[i].day<<" "<<cal->DAY[i].dayofWeek<<
+            " "<<cal->DAY[i].year<<"\t";
+
+        std::cout<<"corr day: "<<correctedDay<<"  gridbox: "<<gridbox<<std::endl;
+
+
+
+        
+
+
+
+
+    }
+
+
+
+
+
+/*
+
+    for(size_t i=0;i<cal->DAY.size();i++)
+    {
+        std::cout<<cal->DAY[i].month<<" "<<cal->DAY[i].day<<" "<<cal->DAY[i].dayofWeek<<
+            " "<<cal->DAY[i].year<<std::endl;
+
+    }
+
+  */
+
 
 
 }    

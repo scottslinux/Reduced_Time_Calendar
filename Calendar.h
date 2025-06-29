@@ -19,13 +19,14 @@ struct CalendarData     //keeping it simple for now
 class Calendar
 {
     private:
-    std::vector<CalendarData> DAY;
+    
 
 
     
 
 
     public:
+    std::vector<CalendarData> DAY;
     
     std::vector<std::string> monthnames;
     std::vector<std::string> daynames;
