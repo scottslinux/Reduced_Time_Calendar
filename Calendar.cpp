@@ -142,7 +142,7 @@ bool Calendar::leapcheck(int year)
     //display the contents of the calendar vector for debugging purposes
     for(size_t i=0;i<DAY.size();i++)
         std::cout<<"day # "<<i<<".."<<daynames[DAY[i].dayofWeek]<<"\t"<<DAY[i].month<<"/"<<DAY[i].day<<
-                                "/"<<DAY[i].year<<"\n";
+                                "/"<<DAY[i].year<<"\t"<<"Mullers day: "<<DAY[i].dayofWeek<<std::endl;
     
 
     return;
