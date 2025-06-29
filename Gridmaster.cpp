@@ -37,12 +37,13 @@ Gridmaster::Gridmaster()
     //⁡⁢⁣⁣Create a  pointer on the stack with the actual object on the heap⁡
     //⁡⁢⁣⁣stack is small..heap is all of memory⁡
     //⁡⁢⁣⁣pointers use heap for object creation⁡ ⁡⁢⁣⁣otherwise stack smashing
-
-
-    calendarYear=new Calendar();
-
-    //⁡⁣⁢⁣initialize the dayGrid Vector to default⁡
     
+  
+    calendarYear=new Calendar();  //create the calendar object on the heap 
+    calendarYear->loadCalendar(2025,0);
+
+    //intialize dayGrid using placeholder
+
     gridData placeholder;       //create a temp gridData item and use it to fill in default values
     placeholder.activeBox=false;
     placeholder.dayRect=Rectangle{0,0,0,0};
@@ -248,7 +249,10 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
 
 void Gridmaster::MergeGridwithCalendar(void)  //Generate Desired Year and Merge it
 {
-    //use example 2025
+    //use example 2025 -created in the constructor
+
+
+    
 
 
 }    
