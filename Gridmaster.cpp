@@ -34,13 +34,22 @@ Gridmaster::Gridmaster()
     monthPosxy.x=0;
     monthPosxy.y=0;
 
+    //⁡⁢⁣⁣Create a  pointer on the stack with the actual object on the heap⁡
+    //⁡⁢⁣⁣stack is small..heap is all of memory⁡
+    //⁡⁢⁣⁣pointers use heap for object creation⁡ ⁡⁢⁣⁣otherwise stack smashing
+
+
+    calendarYear=new Calendar();
 
     //⁡⁣⁢⁣initialize the dayGrid Vector to default⁡
-
+    
     gridData placeholder;       //create a temp gridData item and use it to fill in default values
     placeholder.activeBox=false;
     placeholder.dayRect=Rectangle{0,0,0,0};
     placeholder.dayValue=1;
+    placeholder.dayofweek=0;
+    placeholder.month=0;
+    placeholder.year=0;
 
     dayGrid.resize(420, placeholder);  //this may have fixed the stack slamming exception
 
@@ -52,6 +61,15 @@ Gridmaster::Gridmaster()
  
 }
 //********************************************************
+Gridmaster::~Gridmaster()   //destructor Called Automatically by C++
+{
+    delete calendarYear;  // Clean up the dynamically allocated Calendar
+    calendarYear = nullptr; // Good practice to set to nullptr
+}
+
+//********************************************************
+
+
 //      ⁡⁣⁢⁣Create the screen Grid⁡
 void Gridmaster::DrawGrid()
 {
@@ -224,4 +242,14 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
 
 }
 
+//*******************************************************/
+//      ⁡⁣⁢⁣​‌‌‍𝕄𝔼ℝ𝔾𝔼 𝔾ℝ𝕀𝔻 𝔸ℕ𝔻 ℂ𝔸𝕃𝔼ℕ𝔻𝔸ℝ​⁡
+
+
+void Gridmaster::MergeGridwithCalendar(void)  //Generate Desired Year and Merge it
+{
+    //use example 2025
+
+
+}    
 //*******************************************************/
