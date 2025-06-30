@@ -163,8 +163,11 @@ void Gridmaster::DrawdayGrid(int month)
 
         DrawRectangleLinesEx(currday,1,BLACK);         //draw grid squares for each day
 
-        std::string gridDate=std::to_string(dayGrid[boxCounter].dayValue);
-        DrawText(gridDate.c_str(),x+30,y+40,40,BLACK);
+        if(dayGrid[boxCounter].dayValue !=0)    //only display date in grid boxes that are not blank
+        {
+            std::string gridDate=std::to_string(dayGrid[boxCounter].dayValue);
+            DrawText(gridDate.c_str(),x+30,y+40,40,BLACK);
+        }
 
         //create numbering for each cell....0 to 419
         std::string cellNum=std::to_string(boxCounter++);  //increment boxCounter
@@ -262,56 +265,31 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
     
     std::cout<<"In the merge method within Gridmaster...pointer passed\n";
 
+    int monthindex=0; //start at first month
+    int dayindex=0;
 
-
-
-    for(int i=0;i<=30;i++)
+    while(monthindex<=11)
     {
-        //Mullers has Sat as 0...we need Sun as 0 and Sat as 6 far right
-        //not altering actual Calendar object
+        int firstdayoffset=cal->DAY[dayindex].dayofWeek -2; //correct for week starting Sunday
 
-        int correctedDay=cal->DAY[i].dayofWeek;
-        if (correctedDay==0)
-            correctedDay=6;
-            else
-                correctedDay=correctedDay-1;
 
-        int monthoffset=(cal->DAY[i].month-1)*35;   //first square of every box
-                                                    //is mult of 35.  o, 35, 70...
-        
-        
-        int gridbox=monthoffset+ cal->DAY[i].day+3-1;
-        
-        dayGrid[gridbox].dayValue=cal->DAY[i].day;
+        while( cal->DAY[dayindex].year !=0) //iterate a monthuntil hit divider
+        {
+            std::cout<<cal->DAY[dayindex].month<<"/"<<cal->DAY[dayindex].day<<
+            "/"<< cal->DAY[dayindex].year<<"\t\t"<<dayindex<<std::endl;
 
-        std::cout<<cal->DAY[i].month<<" "<<cal->DAY[i].day<<" "<<cal->DAY[i].dayofWeek<<
-            " "<<cal->DAY[i].year<<"\t";
-
-        std::cout<<"corr day: "<<correctedDay<<"  gridbox: "<<gridbox<<std::endl;
+            dayGrid[monthindex*35 + firstdayoffset + cal->DAY[dayindex].day].dayValue=cal->DAY[dayindex].day;
 
 
 
-        
-
-
-
-
+            dayindex++;
+        }
+        std::cout<<"**********  increment month  *********"<<std::endl;
+        monthindex++;
+        dayindex++;
     }
 
 
-
-
-
-/*
-
-    for(size_t i=0;i<cal->DAY.size();i++)
-    {
-        std::cout<<cal->DAY[i].month<<" "<<cal->DAY[i].day<<" "<<cal->DAY[i].dayofWeek<<
-            " "<<cal->DAY[i].year<<std::endl;
-
-    }
-
-  */
 
 
 
