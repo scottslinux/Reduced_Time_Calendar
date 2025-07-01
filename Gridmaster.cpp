@@ -73,7 +73,7 @@ void Gridmaster::DrawGrid()
 
     //Columns
     for(int i=1;i<=4;i++)
-        DrawLineEx(Vector2{(float)i*Hinterval,1},Vector2{(float)i*Hinterval,(float)monHeight-1},8,BLACK);
+        DrawLineEx(Vector2{(float)i*Hinterval,1},Vector2{(float)i*Hinterval,(float)monHeight-1},15,BLACK);
     
     //weekend shading
     
@@ -128,7 +128,7 @@ void Gridmaster::DrawdayGrid(int month)
 
         Vector2 daypos;
         daypos.x=day*(Hinterval/7)+centerPos+(monthPosxy.x*Hinterval);
-        daypos.y=monthPosxy.y*Vinterval+70;
+        daypos.y=monthPosxy.y*Vinterval+55;
 
         DrawTextEx(dayfont,weekdaynames[day].c_str(),daypos,40,0,WHITE);
 
@@ -260,10 +260,14 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
 
     int monthindex=0; //start at first month
     int dayindex=0;
+    int firstdayoffset=0;
 
     while(monthindex<=11)
     {
-        int firstdayoffset=cal->DAY[dayindex].dayofWeek -2; //correct for week starting Sunday
+        if (cal->DAY[dayindex].dayofWeek ==0) //if month starts on Sat. push to end of week
+            firstdayoffset=5;
+                else
+                    firstdayoffset=cal->DAY[dayindex].dayofWeek -2; //correct for week starting Sunday
 
 
         while( cal->DAY[dayindex].year !=0) //iterate a monthuntil hit divider
