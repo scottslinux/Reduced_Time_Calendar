@@ -12,10 +12,10 @@ struct gridData
 {
     Rectangle dayRect;  // coordinates of rectangle for each box
     bool activeBox;     // is the grid box a blank(false)
-    int dayValue;       // day of month
+    int dayValue;       // day of month should be day
     int dayofweek;
     int month;
-    int year;
+    int year; 
                            
 
 
