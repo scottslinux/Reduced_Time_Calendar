@@ -166,12 +166,13 @@ void Gridmaster::DrawdayGrid(int month)
         if(dayGrid[boxCounter].dayValue !=0)    //only display date in grid boxes that are not blank
         {
             std::string gridDate=std::to_string(dayGrid[boxCounter].dayValue);
-            DrawText(gridDate.c_str(),x+30,y+40,40,BLACK);
+            DrawTextEx(dayfont,gridDate.c_str(),Vector2{x+30,y+40},40,0,DARKGRAY);
+            //DrawText(gridDate.c_str(),x+30,y+40,40,BLACK);
         }
 
         //create numbering for each cell....0 to 419
         std::string cellNum=std::to_string(boxCounter++);  //increment boxCounter
-        DrawText(cellNum.c_str(),x+20,y+10,20,BLACK);
+        //DrawText(cellNum.c_str(),x+20,y+10,20,BLACK);
 
         
     }    
