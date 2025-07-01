@@ -35,6 +35,10 @@ class Gridmaster
     static Font monthfont;  //staying with a static just because
     static Font dayfont;
 
+    int totalVacation;
+    int reducedTimeDays;
+    int fullTimeDays;
+
 
     //  Monitor specific information 
     int monWidth; 
@@ -53,6 +57,7 @@ class Gridmaster
     ~Gridmaster();
     void DrawGrid();    //may enhance this definition later
     void DrawdayGrid(int month); //routine to draw monthly calander grid
+    void Scoreboard(void); //tally the vacation days and display on the right
     void SenseMouse(Rectangle); //return the rectangle that the mouse hovered/clicked on
     Vector2 FindMonthxy(int month); //function to determine grid position for a given month-returns Vec2d x,y
     void MouseTrap(void); //mouse tracking routine

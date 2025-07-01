@@ -21,6 +21,10 @@ Gridmaster::Gridmaster()
     Gridmaster::monthfont=LoadFontEx("./resources/calfont.ttf",80,NULL,0);
     Gridmaster::dayfont=LoadFontEx("./resources/days.ttf",100,NULL,0);
 
+    //vacation totals
+    fullTimeDays=45;
+    reducedTimeDays=46;
+    totalVacation=91;
 
     monWidth=GetScreenWidth();    //initialize to monitor size and calculate everything else
     monHeight=GetScreenHeight();
@@ -97,6 +101,8 @@ void Gridmaster::DrawGrid()
     for(int mnth=1;mnth<=12;mnth++)
         DrawdayGrid(mnth);  //call to draw all day rectangles
 
+    Scoreboard();
+
 
      
     return;
@@ -164,13 +170,70 @@ void Gridmaster::DrawdayGrid(int month)
 
         //create numbering for each cell....0 to 419
         std::string cellNum=std::to_string(boxCounter++);  //increment boxCounter
-        DrawText(cellNum.c_str(),x+20,y+10,20,BLACK);
+        //DrawText(cellNum.c_str(),x+20,y+10,20,BLACK);
 
         
     }    
    }
     return;
 }
+//*******************************************************/
+//          Scoreboard for display and Tally of Days
+void Gridmaster::Scoreboard(void)
+{
+    //right margin starts at Hinterval*4
+
+    Rectangle scorerectfull{Hinterval*4+Hinterval/2-250,100,500,300};
+    Rectangle scorerectReduced{Hinterval*4+Hinterval/2-250,500,500,300};
+    Rectangle scorerecttotal{Hinterval*4+Hinterval/2-250,900,500,300};
+
+
+    std::string fullstring=std::to_string(fullTimeDays);
+    std::string reducedstring=std::to_string(reducedTimeDays);
+    std::string totaldays=std::to_string(totalVacation);
+
+    Vector2 fullstringsize=MeasureTextEx(monthfont,fullstring.c_str(),200,0);
+    Vector2 centerfull {Hinterval*4+Hinterval/2-fullstringsize.x/2, 150};
+    Vector2 centerred {Hinterval*4+Hinterval/2-fullstringsize.x/2, 550};
+    Vector2 centertotal {Hinterval*4+Hinterval/2-fullstringsize.x/2, 950};
+
+
+
+    //draw rounded rectangles for the days
+    DrawRectangleRounded(scorerectfull,0.4,8,BLUE);                 
+    DrawRectangleRounded(scorerectReduced,0.4,8,Color{44,104,34,255});
+    DrawRectangleRounded(scorerecttotal,0.4,8,Color{94,116,150,255});
+    
+
+    //fill in the days
+    DrawTextEx(monthfont,fullstring.c_str(),centerfull,200,0,WHITE);
+    DrawTextEx(monthfont,reducedstring.c_str(),centerred,200,0,WHITE);
+    DrawTextEx(monthfont,totaldays.c_str(),centertotal,200,0,WHITE);
+
+    //labels
+    Vector2 centerfulltext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"FULL TIME",40,0).x/2,120};
+    Vector2 centerredtext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"REDUCED TIME",40,0).x/2, 530};
+    Vector2 centertotaltext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"TOTAL DAYS",40,0).x/2, 930};
+
+    DrawTextEx(monthfont,"FULL TIME",centerfulltext,40,0,WHITE);
+    DrawTextEx(monthfont,"REDUCED TIME",centerredtext,40,0,WHITE);
+    DrawTextEx(monthfont,"TOTAL DAYS",centertotaltext,40,0,WHITE);
+
+
+
+    
+    
+    return;
+}
+
+
+
+
+
+
+
+
+
 //*******************************************************/
 //  ⁡⁣⁢⁣Function to determine grid position for a given month-returns Vec2d x,y⁡
 
@@ -203,7 +266,7 @@ void Gridmaster::MouseTrap()
     positionReadout="X= "+std::to_string((int)mousepos.x)+
                    "\nY= "+std::to_string((int)mousepos.y);
 
-    DrawText(positionReadout.c_str(),4*Hinterval+100,Vinterval,40,DARKGREEN);
+    //DrawText(positionReadout.c_str(),4*Hinterval+100,Vinterval,40,DARKGREEN);
 
     
     Gridmaster::MouseCollision(mousepos);
@@ -233,8 +296,8 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
     }
     if(!flag)
         contactedSquare=999;
-    squarestr="BOX NUM: "+std::to_string(contactedSquare);
-    DrawTextEx(monthfont,squarestr.c_str(),Vector2{4*(float)Hinterval+100,(float)Vinterval+100},80,0,BLUE);
+    //squarestr="BOX NUM: "+std::to_string(contactedSquare);
+    //DrawTextEx(monthfont,squarestr.c_str(),Vector2{4*(float)Hinterval+100,(float)Vinterval+100},80,0,BLUE);
     
     if(contactedSquare!=999)
         DrawRectangleRec(dayGrid[contactedSquare].dayRect,Color{0,20,200,50});
