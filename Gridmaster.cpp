@@ -34,14 +34,6 @@ Gridmaster::Gridmaster()
     monthPosxy.x=0;
     monthPosxy.y=0;
 
-    //Create a  pointer on the stack with the actual object on the heap
-    //stack is small..heap is all of memory
-    //pointers use heap for object creation otherwise stack smashing
-    
-  
-    //calendarYear=new Calendar();  //⁡⁣⁢⁣𝗰𝗿𝗲𝗮𝘁𝗲 𝘁𝗵𝗲 𝗰𝗮𝗹𝗲𝗻𝗱𝗮𝗿 𝗼𝗯𝗷𝗲𝗰𝘁 𝗼𝗻 𝘁𝗵𝗲 𝗵𝗲𝗮𝗽⁡ 
-    //calendarYear->loadCalendar(2025,0); //⁡⁣⁢⁣𝗹𝗼𝗮𝗱 𝘄𝗶𝘁𝗵 𝟮𝟬𝟮𝟱⁡
-
     
     //intialize dayGrid using placeholder
 
@@ -53,7 +45,7 @@ Gridmaster::Gridmaster()
     placeholder.month=0;
     placeholder.year=0;
 
-    dayGrid.resize(420, placeholder);  //this may have fixed the stack slamming exception
+    dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
 
     
         //debugging
@@ -95,7 +87,7 @@ void Gridmaster::DrawGrid()
     //Month Bars
     for(int num=0;num<=2;num++)
     {
-        Rectangle monthbar{0,Vinterval*num,Hinterval*4,Vinterval/6};
+        Rectangle monthbar{0,Vinterval*num,Hinterval*4,Vinterval/7};
         DrawRectangleRec(monthbar,Color{13,18,100,255});  //blue solid bars
     }
     
@@ -117,7 +109,7 @@ void Gridmaster::DrawdayGrid(int month)
 {
     
     int cellWidth=Hinterval/7;  //width of day block
-    int cellHeight=Vinterval/6; //height of day block
+    int cellHeight=Vinterval/7; //height of day block--make it more narrow to fit 6th week
 
     monthPosxy=FindMonthxy(month);  //find the offset based on the month for where to draw
 
@@ -145,7 +137,7 @@ void Gridmaster::DrawdayGrid(int month)
     }
 
   
-  for(int week=1;week<=5;week++)     //for each week of the 5 week grid
+  for(int week=1;week<=6;week++)     //for each week of the 5 week grid
   {
     for(int day=0;day<=6;day++)     //Create 7 days
     {
@@ -172,7 +164,7 @@ void Gridmaster::DrawdayGrid(int month)
 
         //create numbering for each cell....0 to 419
         std::string cellNum=std::to_string(boxCounter++);  //increment boxCounter
-        //DrawText(cellNum.c_str(),x+20,y+10,20,BLACK);
+        DrawText(cellNum.c_str(),x+20,y+10,20,BLACK);
 
         
     }    
@@ -279,7 +271,7 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
             std::cout<<cal->DAY[dayindex].month<<"/"<<cal->DAY[dayindex].day<<
             "/"<< cal->DAY[dayindex].year<<"\t\t"<<dayindex<<std::endl;
 
-            dayGrid[monthindex*35 + firstdayoffset + cal->DAY[dayindex].day].dayValue=cal->DAY[dayindex].day;
+            dayGrid[monthindex*42 + firstdayoffset + cal->DAY[dayindex].day].dayValue=cal->DAY[dayindex].day;
 
 
 
