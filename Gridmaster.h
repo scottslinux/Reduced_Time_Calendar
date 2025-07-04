@@ -34,10 +34,12 @@ class Gridmaster
     std::vector<std::string> monthNames;
     static Font monthfont;  //staying with a static just because
     static Font dayfont;
+    static Font marker;
 
-    int totalVacation;
-    int reducedTimeDays;
-    int fullTimeDays;
+    float totalVacation;
+    float initialVacation;
+    float reducedTimeDays;
+    float fullTimeDays;
 
 
     //  Monitor specific information 
@@ -47,6 +49,7 @@ class Gridmaster
     int Vinterval;
     int boxCounter;   //⁡⁣⁣⁢total number of boxes on grid. 7days*5 weeks * 12 months= 420⁡
     Vector2 monthPosxy; //used to specify position on the grid of a particular month
+    
 
 
 

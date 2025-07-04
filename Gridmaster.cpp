@@ -8,6 +8,7 @@
 
 Font Gridmaster::monthfont;
 Font Gridmaster::dayfont;
+Font Gridmaster::marker;
 
 //********************************************************
 //  ⁡⁣⁢⁣Constructor⁡
@@ -20,11 +21,13 @@ Gridmaster::Gridmaster()
     
     Gridmaster::monthfont=LoadFontEx("./resources/calfont.ttf",80,NULL,0);
     Gridmaster::dayfont=LoadFontEx("./resources/days.ttf",100,NULL,0);
+    Gridmaster::marker=LoadFont("./resources/Marker Felt.ttf");
 
     //vacation totals
-    fullTimeDays=45;
-    reducedTimeDays=46;
-    totalVacation=91;
+    fullTimeDays=45.0;
+    reducedTimeDays=46.0;
+    totalVacation=91.0;
+    initialVacation=totalVacation;  //unchanging amount to reflect starting amoount
 
     monWidth=GetScreenWidth();    //initialize to monitor size and calculate everything else
     monHeight=GetScreenHeight();
@@ -177,22 +180,44 @@ void Gridmaster::DrawdayGrid(int month)
    }
     return;
 }
-//*******************************************************/
-//          Scoreboard for display and Tally of Days
+//*************************************************************************/
+//          ⁡⁣⁢⁣​‌‌‍𝗦𝗰𝗼𝗿𝗲𝗯𝗼𝗮𝗿𝗱 𝗳𝗼𝗿 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝗮𝗻𝗱 𝗧𝗮𝗹𝗹𝘆 𝗼𝗳 𝗗𝗮𝘆𝘀​⁡
+// ***Needs re-write
+
+
 void Gridmaster::Scoreboard(void)
 {
     //right margin starts at Hinterval*4
+
+    DrawRectangle(Hinterval*4,0,Hinterval,Vinterval*3,Color{131,197,203,255});
+
+    DrawCircle(Hinterval*4+Hinterval/2,1350,108,WHITE);
+    DrawCircle(Hinterval*4+Hinterval/2,1350,100,BLUE);
+
+
+    Vector2 stringsizeyear=MeasureTextEx(monthfont,"2025",120,0);
+    std::string yearstring="2025";
+    DrawTextEx(monthfont,yearstring.c_str(),Vector2{Hinterval*4+Hinterval/2-stringsizeyear.x/2,0},120,0,BLACK);
+
+
 
     Rectangle scorerectfull{Hinterval*4+Hinterval/2-250,100,500,300};
     Rectangle scorerectReduced{Hinterval*4+Hinterval/2-250,500,500,300};
     Rectangle scorerecttotal{Hinterval*4+Hinterval/2-250,900,500,300};
 
 
-    std::string fullstring=std::to_string(fullTimeDays);
-    std::string reducedstring=std::to_string(reducedTimeDays);
-    std::string totaldays=std::to_string(totalVacation);
+    //std::string fullstring=std::to_string(fullTimeDays);
 
-    Vector2 fullstringsize=MeasureTextEx(monthfont,fullstring.c_str(),200,0);
+    char buffer[32];
+    snprintf(buffer,sizeof(buffer),"%.2f",fullTimeDays);
+    char buffer2[32];
+    snprintf(buffer2,sizeof(buffer2),"%.2f",reducedTimeDays);
+    char buffer3[32];
+    snprintf(buffer3,sizeof(buffer3),"%.2f",totalVacation);
+
+    
+
+    Vector2 fullstringsize=MeasureTextEx(monthfont,buffer,200,0);
     Vector2 centerfull {Hinterval*4+Hinterval/2-fullstringsize.x/2, 150};
     Vector2 centerred {Hinterval*4+Hinterval/2-fullstringsize.x/2, 550};
     Vector2 centertotal {Hinterval*4+Hinterval/2-fullstringsize.x/2, 950};
@@ -206,18 +231,27 @@ void Gridmaster::Scoreboard(void)
     
 
     //fill in the days
-    DrawTextEx(monthfont,fullstring.c_str(),centerfull,200,0,WHITE);
-    DrawTextEx(monthfont,reducedstring.c_str(),centerred,200,0,WHITE);
-    DrawTextEx(monthfont,totaldays.c_str(),centertotal,200,0,WHITE);
+    DrawTextEx(monthfont,buffer,centerfull,200,0,WHITE);
+    DrawTextEx(monthfont,buffer2,centerred,200,0,WHITE);
+    DrawTextEx(monthfont,buffer3,centertotal,200,0,WHITE);
 
     //labels
-    Vector2 centerfulltext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"FULL TIME",40,0).x/2,120};
-    Vector2 centerredtext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"REDUCED TIME",40,0).x/2, 530};
-    Vector2 centertotaltext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"TOTAL DAYS",40,0).x/2, 930};
+    Vector2 centerfulltext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"FULL TIME",50,0).x/2,120};
+    Vector2 centerredtext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"REDUCED TIME",50,0).x/2, 530};
+    Vector2 centertotaltext {Hinterval*4+Hinterval/2-MeasureTextEx(monthfont,"TOTAL DAYS",50,0).x/2, 930};
 
-    DrawTextEx(monthfont,"FULL TIME",centerfulltext,40,0,WHITE);
-    DrawTextEx(monthfont,"REDUCED TIME",centerredtext,40,0,WHITE);
-    DrawTextEx(monthfont,"TOTAL DAYS",centertotaltext,40,0,WHITE);
+    DrawTextEx(monthfont,"FULL TIME",centerfulltext,50,0,WHITE);
+    DrawTextEx(monthfont,"REDUCED TIME",centerredtext,50,0,WHITE);
+    DrawTextEx(monthfont,"TOTAL DAYS",centertotaltext,50,0,WHITE);
+    centertotaltext.y+=200;
+    DrawTextEx(monthfont,"REMAINING",centertotaltext,50,0,WHITE);
+
+
+    DrawTextEx(marker,"Percentage of FTE: 80%",Vector2{Hinterval*4+25,1600},100,0,BLACK);
+    DrawTextEx(marker,"Total Days: 91 ",Vector2{Hinterval*4+25,1700},100,0,BLACK);
+    DrawTextEx(marker,"Total Weeks: 18 ",Vector2{Hinterval*4+25,1800},100,0,BLACK);
+    DrawTextEx(marker,"Carry-Over: 3 days ",Vector2{Hinterval*4+25,1900},100,0,BLACK);
+
 
 
 
@@ -263,10 +297,8 @@ void Gridmaster::MouseTrap()
     std::string positionReadout;
 
     mousepos=GetMousePosition();
-    positionReadout="X= "+std::to_string((int)mousepos.x)+
-                   "\nY= "+std::to_string((int)mousepos.y);
-
-    //DrawText(positionReadout.c_str(),4*Hinterval+100,Vinterval,40,DARKGREEN);
+    
+    
 
     
     Gridmaster::MouseCollision(mousepos);
@@ -275,6 +307,9 @@ void Gridmaster::MouseTrap()
 
 }
 //*******************************************************/
+//      ⁡⁣⁢⁣​‌‌‍ℂ𝕙𝕖𝕔𝕜 𝕄𝕠𝕦𝕤𝕖 ℙ𝕠𝕤𝕚𝕥𝕚𝕠𝕟 𝔸𝕘𝕒𝕚𝕟𝕤𝕥 𝕥𝕙𝕖 𝔾𝕣𝕚𝕕 𝕍𝕖𝕔𝕥𝕠𝕣​⁡
+//      Determine square/date the mouse is over
+
 int Gridmaster::MouseCollision(Vector2 mousepos)
 {
     int contactedSquare=0;
