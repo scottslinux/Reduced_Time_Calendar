@@ -13,9 +13,6 @@ Font Gridmaster::marker;
 //********************************************************
 //  ⁡⁣⁢⁣Constructor⁡
 Gridmaster::Gridmaster()
-:weekdaynames{"SU","MO","TU","WE","TH","FR","SA"},
- monthNames{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY",
-    "AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"} 
 
 {
     
@@ -23,25 +20,13 @@ Gridmaster::Gridmaster()
     Gridmaster::dayfont=LoadFontEx("./resources/days.ttf",100,NULL,0);
     Gridmaster::marker=LoadFont("./resources/Marker Felt.ttf");
 
-    //vacation totals
-    fullTimeDays=45.0;
-    reducedTimeDays=46.0;
-    totalVacation=91.0;
-    initialVacation=totalVacation;  //unchanging amount to reflect starting amoount
-
+  
     monWidth=GetScreenWidth();    //initialize to monitor size and calculate everything else
     monHeight=GetScreenHeight();
 
     Hinterval=monWidth/5;   //(horizontal) width of month block
     Vinterval=monHeight/3;  //(vertical) height of month block
 
-    boxCounter= 0;  //count all of the grid squares
- 
-
-    monthPosxy.x=0;
-    monthPosxy.y=0;
-
-    
     //intialize dayGrid using placeholder
 
     gridData placeholder;       //create a temp gridData item and use it to fill in default values
@@ -51,6 +36,7 @@ Gridmaster::Gridmaster()
     placeholder.dayofweek=0;
     placeholder.month=0;
     placeholder.year=0;
+    placeholder.typeofday=0;
 
     dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
 
@@ -163,6 +149,10 @@ void Gridmaster::DrawdayGrid(int month)
         
 
         DrawRectangleLinesEx(currday,1,BLACK);         //draw grid squares for each day
+        //Color grid square according to the type of PTO
+        if(dayGrid[boxCounter].typeofday==1) //full time PTO
+            DrawRectangle(currday.x+1,currday.y+1,cellWidth-2,cellHeight-2,Color{0,121,241,150});
+
 
         if(dayGrid[boxCounter].dayValue !=0)    //only display date in grid boxes that are not blank
         {
@@ -189,10 +179,10 @@ void Gridmaster::Scoreboard(void)
 {
     //right margin starts at Hinterval*4
 
-    DrawRectangle(Hinterval*4,0,Hinterval,Vinterval*3,Color{131,197,203,255});
+    DrawRectangle(Hinterval*4,0,Hinterval,Vinterval*3,Color{131,197,203,100});
 
     DrawCircle(Hinterval*4+Hinterval/2,1350,108,WHITE);
-    DrawCircle(Hinterval*4+Hinterval/2,1350,100,BLUE);
+    DrawCircle(Hinterval*4+Hinterval/2,1350,100,Color{0,121,241,180});
 
 
     Vector2 stringsizeyear=MeasureTextEx(monthfont,"2025",120,0);
@@ -295,14 +285,13 @@ void Gridmaster::MouseTrap()
 {
     Vector2 mousepos;
     std::string positionReadout;
+    int currentsquare=999;
 
-    mousepos=GetMousePosition();
-    
-    
+    mousepos=GetMousePosition(); //shows highligted square on current mouse pos
 
-    
-    Gridmaster::MouseCollision(mousepos);
+    currentsquare=Gridmaster::MouseCollision(mousepos); //get the current index for the square
 
+    Gridmaster::mouseClickChoices(currentsquare);
 
 
 }
@@ -317,6 +306,15 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
     bool flag=false;
 
     int index=0;
+
+    //did you click on the color circle
+    if(CheckCollisionPointCircle(mousepos,Vector2{(float)(Hinterval*4+Hinterval/2),1350},100)&&
+                                    IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+    {
+        std::cout<<"CIRCLE JERK!!!!!\n";
+        //routine to change the active palette color
+        return 999;
+    }
 
     for(gridData& box : dayGrid)    //for each gridData element in the vector DayGrid
     {
@@ -338,7 +336,7 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
         DrawRectangleRec(dayGrid[contactedSquare].dayRect,Color{0,20,200,50});
         
 
-    return 1;
+    return contactedSquare;
 
 
 
@@ -373,7 +371,13 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
             std::cout<<cal->DAY[dayindex].month<<"/"<<cal->DAY[dayindex].day<<
             "/"<< cal->DAY[dayindex].year<<"\t\t"<<dayindex<<std::endl;
 
+            //set all of the values for the day in the grid to match the appropriate calendar values
             dayGrid[monthindex*42 + firstdayoffset + cal->DAY[dayindex].day].dayValue=cal->DAY[dayindex].day;
+            dayGrid[monthindex*42 + firstdayoffset + cal->DAY[dayindex].day].dayofweek=cal->DAY[dayindex].dayofWeek;
+            dayGrid[monthindex*42 + firstdayoffset + cal->DAY[dayindex].day].month=cal->DAY[dayindex].month;
+            dayGrid[monthindex*42 + firstdayoffset + cal->DAY[dayindex].day].year=cal->DAY[dayindex].year;
+            //set type of day to 0: default unbooked (not present in cal)
+            dayGrid[monthindex*42 + firstdayoffset + cal->DAY[dayindex].day].typeofday=0;
 
 
 
@@ -389,4 +393,36 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
 
 
 }    
-//*******************************************************/
+//***************************************************************************/
+//              ⁡⁣⁢⁣​‌‌‍𝗠𝗼𝘂𝘀𝗲 𝗖𝗹𝗶𝗰𝗸 𝗖𝗵𝗼𝗶𝗰𝗲𝘀​⁡
+
+void Gridmaster::mouseClickChoices(int gridIndex)
+{
+    //are we in the color circle-yes: change color, 
+    //are we in an invlaid square or weekend yes:return
+    //valid day: is it colored unchoose it...adjust numbers
+    //valid day with shift down...add quarter day
+    
+
+
+    // Mouse Clicking for PTO Choice and not on a weekend???
+    if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)&& (dayGrid[gridIndex].dayofweek!=0)&&
+                            (dayGrid[gridIndex].dayofweek!=1))
+    {
+        std::cout<<"LEFT MOUSE BUTTON CLICKED on "<<
+            dayGrid[gridIndex].month<<"/"<<dayGrid[gridIndex].dayValue<<"/"<<
+                dayGrid[gridIndex].year<<std::endl;
+            dayGrid[gridIndex].typeofday=activePaint;
+        fullTimeDays--;
+
+
+    }
+
+
+
+
+
+
+
+return;
+}

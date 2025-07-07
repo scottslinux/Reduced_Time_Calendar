@@ -16,9 +16,19 @@ struct gridData
     int dayofweek;
     int month;
     int year; 
+    int typeofday;
                            
 
 
+
+};
+struct color_rgba
+{
+        //color components r,g,b,a
+    int r;
+    int g;
+    int b;
+    int a;
 
 };
 //*****************************************************************************/
@@ -30,25 +40,38 @@ class Gridmaster
 
 
     std::vector<gridData> dayGrid;  //the master list of all grid squares..active or not
-    std::vector<std::string> weekdaynames;
-    std::vector<std::string> monthNames;
+
+    std::vector<std::string> weekdaynames{"SU","MO","TU","WE","TH","FR","SA"};
+    std::vector<std::string> monthNames{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY",
+    "AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
+
     static Font monthfont;  //staying with a static just because
     static Font dayfont;
     static Font marker;
 
-    float totalVacation;
-    float initialVacation;
-    float reducedTimeDays;
-    float fullTimeDays;
+    float totalVacation=91.0;
+    float fullTimeDays=45.0;
+    float reducedTimeDays=46.0;
+    float initialVacation=totalVacation;
+    
+    
+    
+    color_rgba reducedColor{0,255,0,100};
+    color_rgba fullColor{0,121,241,100};
+    
 
 
-    //  Monitor specific information 
-    int monWidth; 
+
+    //  Monitor specific information needs to execute and define in constructor
+    int monWidth;; 
     int monHeight;
     int Hinterval;
     int Vinterval;
-    int boxCounter;   //⁡⁣⁣⁢total number of boxes on grid. 7days*5 weeks * 12 months= 420⁡
-    Vector2 monthPosxy; //used to specify position on the grid of a particular month
+
+
+    int boxCounter=0;   //⁡⁣⁣⁢total number of boxes on grid. 7days*5 weeks * 12 months= 420⁡
+    int activePaint=0;  //color/designation to paint days in
+    Vector2 monthPosxy{0,0}; //used to specify position on the grid of a particular month
     
 
 
@@ -66,5 +89,7 @@ class Gridmaster
     void MouseTrap(void); //mouse tracking routine
     int MouseCollision(Vector2); //check the mouse against the grid vector. Return the # of contact rectangle
     void MergeGridwithCalendar(Calendar*); //Merge the calendar of year(int) with the grid
+    void mouseClickChoices(int); //evaluate mouse clicks, make day changes, change paint brush(red v fulltime)
+    
 };
 
