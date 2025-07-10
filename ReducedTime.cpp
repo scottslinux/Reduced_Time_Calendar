@@ -19,7 +19,7 @@ int main()
     Calendar* CurrYear;
 
     CurrYear=new Calendar();
-    CurrYear->loadCalendar(2025,0); //create a year
+    CurrYear->loadCalendar(2026,0); //create a year
 
     //now pass the year to gridmaster just for a function to merge the squares with cal data
     //I dont think it needs to persist

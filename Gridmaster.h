@@ -12,6 +12,7 @@ struct gridData
 {
     Rectangle dayRect;  // coordinates of rectangle for each box
     bool activeBox;     // is the grid box a blank(false)
+    bool blackout;      //is this a blackout date?
     int dayValue;       // day of month should be day
     int dayofweek;
     int month;
@@ -84,6 +85,6 @@ class Gridmaster
     void MergeGridwithCalendar(Calendar*); //Merge the calendar of year(int) with the grid
     void mouseClickChoices(int, Vector2); //evaluate mouse clicks, make day changes, change paint brush(red v fulltime)
     void adjustTotals(int designation,float val);//call routine to adjust full/reduced/total
-
+    void menuchecking(Vector2 mousepos); //check the hover and menu choices
 };
 

@@ -31,6 +31,7 @@ Gridmaster::Gridmaster()
 
     gridData placeholder;       //create a temp gridData item and use it to fill in default values
     placeholder.activeBox=false;
+    placeholder.blackout=false;
     placeholder.dayRect=Rectangle{0,0,0,0};
     placeholder.dayValue=0;
     placeholder.dayofweek=0;
@@ -168,6 +169,8 @@ void Gridmaster::DrawdayGrid(int month)
                             ,paletteColor[1]); // 0: color fulltime 
 
         }
+
+
         if(dayGrid[boxCounter].dayValue !=0)    //only display ⁡⁢⁣⁣date⁡ in grid boxes that are not blank
         {
             std::string gridDate=std::to_string(dayGrid[boxCounter].dayValue);
@@ -176,7 +179,12 @@ void Gridmaster::DrawdayGrid(int month)
   
             
         }
-
+        if(dayGrid[boxCounter].blackout)
+        {
+            
+            DrawRectangleLinesEx(Rectangle{currday.x,currday.y,(float)cellWidth,(float)cellHeight},
+                                    10,Color{205,155,255,255});
+        }
         
         //increment the gridbox counter
 
@@ -202,10 +210,10 @@ void Gridmaster::Scoreboard(void)
     DrawCircle(Hinterval*4+Hinterval/2,1350,108,WHITE);
     DrawCircle(Hinterval*4+Hinterval/2,1350,100,paletteColor[colorindex]);
 
-
-    Vector2 stringsizeyear=MeasureTextEx(monthfont,"2025",120,0);
-    std::string yearstring="2025";
-    DrawTextEx(monthfont,yearstring.c_str(),Vector2{Hinterval*4+Hinterval/2-stringsizeyear.x/2,0},120,0,BLACK);
+    std::string titleyear=std::to_string(dayGrid[20].year); //the 20th element will definitely be a real day and not blank
+    Vector2 stringsizeyear=MeasureTextEx(monthfont,titleyear.c_str(),120,0);
+    
+    DrawTextEx(monthfont,titleyear.c_str(),Vector2{Hinterval*4+Hinterval/2-stringsizeyear.x/2,0},120,0,BLACK);
 
 
 
@@ -254,11 +262,29 @@ void Gridmaster::Scoreboard(void)
     centertotaltext.y+=200;
     DrawTextEx(monthfont,"REMAINING",centertotaltext,50,0,WHITE);
 
+    Rectangle menu1{Hinterval*4+10,1600,700,100};
+    Rectangle menu2{Hinterval*4+10,1710,700,100};
+    Rectangle menu3{Hinterval*4+10,1820,700,100};
 
-    DrawTextEx(marker,"Percentage of FTE: 80%",Vector2{Hinterval*4+25,1600},100,0,BLACK);
-    DrawTextEx(marker,"Total Days: 91 ",Vector2{Hinterval*4+25,1700},100,0,BLACK);
-    DrawTextEx(marker,"Total Weeks: 18 ",Vector2{Hinterval*4+25,1800},100,0,BLACK);
-    DrawTextEx(marker,"Carry-Over: 3 days ",Vector2{Hinterval*4+25,1900},100,0,BLACK);
+
+    DrawRectangle(menu1.x+5,menu1.y+5,700,100,BLACK);
+    DrawRectangle(menu1.x,menu1.y,700,100,LIGHTGRAY);
+    DrawRectangleLinesEx(menu1,10,GRAY);
+
+    DrawRectangle(menu2.x+5,menu2.y+5,700,100,BLACK);
+    DrawRectangle(menu2.x,menu2.y,700,100,LIGHTGRAY);
+    DrawRectangleLinesEx(menu2,10,GRAY);
+
+    DrawRectangle(menu3.x+5,menu3.y+5,700,100,BLACK);
+    DrawRectangle(menu3.x,menu3.y,700,100,LIGHTGRAY);
+    DrawRectangleLinesEx(menu3,10,GRAY);
+
+
+    DrawTextEx(marker,"Save Current Calendar",Vector2{Hinterval*4+35,1600},100,0,BLACK);
+    DrawTextEx(marker,"Load Existing Calendar ",Vector2{Hinterval*4+35,1705},100,0,BLACK);
+    DrawTextEx(marker,"Create New Calendar",Vector2{Hinterval*4+50,1820},100,0,BLACK);
+    
+    
 
 
     return;
@@ -300,6 +326,8 @@ void Gridmaster::MouseTrap()
     currentsquare=Gridmaster::MouseCollision(mousepos); //get the current index for the square
 
     Gridmaster::mouseClickChoices(currentsquare, mousepos);
+
+    
 
 
 }
@@ -426,7 +454,18 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
         if(colorindex>1) colorindex=0;
         return;
     }
-    
+    //⁡⁣⁢⁣𝗥𝗶𝗴𝗵𝘁 𝗰𝗹𝗶𝗰𝗸--𝗮𝗱𝗱𝗶𝗻𝗴 𝗯𝗹𝗮𝗰𝗸𝗼𝘂𝘁 𝗱𝗮𝘁𝗲𝘀⁡
+    if(rightClick)  //mark blackout dates
+        {
+            if(dayGrid[gridIndex].blackout)
+                dayGrid[gridIndex].blackout=false; //toggle to off if it was already on
+                else    
+                    dayGrid[gridIndex].blackout=true;
+
+
+        }
+
+
     //-------------------------------------------
     // ⁡⁣⁢⁣Mouse Clicking on a VALID Day that is not a weekend???⁡
 
@@ -468,8 +507,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
 
             return;
         }
-
-
+        
     return;
     
 }
