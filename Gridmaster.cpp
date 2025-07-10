@@ -163,6 +163,8 @@ void Gridmaster::DrawdayGrid(int month)
             std::string gridDate=std::to_string(dayGrid[boxCounter].dayValue);
             DrawTextEx(dayfont,gridDate.c_str(),Vector2{x+30,y+40},40,0,Color{0,0,0,255});
             
+  
+            
         }
 
         
@@ -391,10 +393,8 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     //are we in an invlaid square or weekend yes:return
     //valid day: is it colored unchoose it...adjust numbers
     //valid day with shift down...add quarter day
-    //**𝘊𝘳𝘦𝘢𝘵𝘪𝘯𝘨 𝘧𝘭𝘢𝘨𝘴 𝘧𝘰𝘳 𝘤𝘭𝘢𝘳𝘪𝘵𝘺 𝘪𝘯 𝘥𝘦𝘤𝘪𝘴𝘪𝘰𝘯 𝘵𝘳𝘦𝘦 */
+    //**⁡⁣⁢⁣𝘊𝘳𝘦𝘢𝘵𝘪𝘯𝘨 𝘧𝘭𝘢𝘨𝘴 𝘧𝘰𝘳 𝘤𝘭𝘢𝘳𝘪𝘵𝘺 𝘪𝘯 𝘥𝘦𝘤𝘪𝘴𝘪𝘰𝘯 𝘵𝘳𝘦𝘦⁡ */
 
-    //-------------------------------------------
-    //did you ⁡⁣⁢⁣𝙘𝙡𝙞𝙘𝙠 𝙤𝙣 𝙩𝙝𝙚 𝙘𝙤𝙡𝙤𝙧 𝙘𝙞𝙧𝙘𝙡𝙚⁡
 
     bool shiftFlag=(IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown((KEY_RIGHT_SHIFT)));  //for quarter days
     bool mouseInCircle=CheckCollisionPointCircle(mousepos,Vector2{(float)(Hinterval*4+Hinterval/2),1350},100);
@@ -422,6 +422,16 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
 
     if(leftClick && !weekendFlag)
     {
+        if(dayGrid[gridIndex].value<1 && shiftFlag)  //⁡⁣⁣⁢𝘀𝗵𝗶𝗳𝘁= 𝘄𝗼𝗿𝗸𝗶𝗻𝗴 𝘄𝗶𝘁𝗵 𝗾𝘂𝗮𝗿𝘁𝗲𝗿 𝗱𝗮𝘆𝘀⁡ val<1 either 0 or fractional
+        {   
+            dayGrid[gridIndex].designation=colorindex+1;
+            Gridmaster::adjustTotals(dayGrid[gridIndex].designation,0.25);
+            dayGrid[gridIndex].value+=0.25;               //attribute full day on that date
+            std::cout<<"Value: "<<dayGrid[gridIndex].value<<std::endl;
+
+            return; //gotta get out of the routine after a choice is executed
+        }
+
 
         //if the day is clear -mark it as a full day in whichever category and adjust totals
         if(dayGrid[gridIndex].designation==0)
@@ -434,16 +444,17 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
         }
 
 
-                 
-    
-        
 
-//erase a day
+        //erase a day
         if((dayGrid[gridIndex].designation==1)||(dayGrid[gridIndex].designation==2))   
         {
+
             Gridmaster::adjustTotals(dayGrid[gridIndex].designation,dayGrid[gridIndex].value* -1);   //return the time (subtract)
-            dayGrid[gridIndex].designation=0;
-            dayGrid[gridIndex].value=0;          //take it away from that day
+            
+            dayGrid[gridIndex].value-=dayGrid[gridIndex].value;          //take it away from that day
+
+            if(dayGrid[gridIndex].value==0)         //only kill designation if all value gone <1/4
+                dayGrid[gridIndex].designation=0;
 
             return;
         }
@@ -455,14 +466,14 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
 }
 //****************************************************************************/
 
-void Gridmaster::adjustTotals(int designation,float value) //1=FullTime 2=Reduced
+void Gridmaster::adjustTotals(int designation,float val) //1=FullTime 2=Reduced
 {
-    std::cout<<"entering adjusttotals: designation:"<<designation<<" Value:"<<value<<std::endl;
+    std::cout<<"entering adjusttotals: designation:"<<designation<<" Value:"<<val<<std::endl;
 
-    if(designation==1)  //adjustment to full time (when passing negative one it adds a day that is being returned
-        fullTimeDays-=value;
+    if(designation==1)  //adjustment to full time when passing negative one it adds a day that is being returned
+        fullTimeDays-=val;
         else    
-            reducedTimeDays-=value; //adjust reduced
+            reducedTimeDays-=val; //adjust reduced
 
     totalVacation=fullTimeDays+reducedTimeDays;
 
