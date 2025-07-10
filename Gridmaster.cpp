@@ -154,10 +154,20 @@ void Gridmaster::DrawdayGrid(int month)
         //⁡⁢⁣⁣​‌‍‌𝗖𝗼𝗹𝗼𝗿 𝗴𝗿𝗶𝗱 𝘀𝗾𝘂𝗮𝗿𝗲 𝗮𝗰𝗰𝗼𝗿𝗱𝗶𝗻𝗴 𝘁𝗼 𝘁𝗵𝗲 𝘁𝘆𝗽𝗲 𝗼𝗳 𝗣𝗧𝗢​⁡
 
         if(dayGrid[boxCounter].designation==1) //full time PTO
-            DrawRectangle(currday.x+1,currday.y+1,cellWidth-2,cellHeight-2,paletteColor[0]); // 0: color fulltime 
-        if(dayGrid[boxCounter].designation==2) //reduced time
-            DrawRectangle(currday.x+1,currday.y+1,cellWidth-2,cellHeight-2,paletteColor[1]); // 1: color reduced 
+        {
+            float currdayadjusted=currday.y+(cellHeight-(cellHeight*dayGrid[boxCounter].value));
+            DrawRectangle(currday.x+1,currdayadjusted,cellWidth-2,cellHeight*dayGrid[boxCounter].value
+                            ,paletteColor[0]); // 0: color fulltime 
+        
+        }
 
+        if(dayGrid[boxCounter].designation==2) //reduced time
+        {
+            float currdayadjusted=currday.y+(cellHeight-(cellHeight*dayGrid[boxCounter].value));
+            DrawRectangle(currday.x+1,currdayadjusted,cellWidth-2,cellHeight*dayGrid[boxCounter].value
+                            ,paletteColor[1]); // 0: color fulltime 
+
+        }
         if(dayGrid[boxCounter].dayValue !=0)    //only display ⁡⁢⁣⁣date⁡ in grid boxes that are not blank
         {
             std::string gridDate=std::to_string(dayGrid[boxCounter].dayValue);
