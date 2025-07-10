@@ -16,21 +16,14 @@ struct gridData
     int dayofweek;
     int month;
     int year; 
-    int typeofday;
+    int designation;    // 1 fulltime 2 reduced
+    int value;       //unused  
                            
 
 
 
 };
-struct color_rgba
-{
-        //color components r,g,b,a
-    int r;
-    int g;
-    int b;
-    int a;
 
-};
 //*****************************************************************************/
 //⁡⁣⁢⁣​‌‍‌𝗠𝗮𝗶𝗻 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗰𝗿𝗲𝗮𝘁𝗲 𝘁𝗵𝗲 𝗚𝗿𝗶𝗱 𝗮𝗻𝗱 𝗠𝗼𝗻𝗶𝘁𝗼𝗿 𝗺𝗼𝘂𝘀𝗲 𝗺𝗼𝘃𝗲𝗺𝗲𝗻𝘁​⁡
 class Gridmaster
@@ -55,10 +48,11 @@ class Gridmaster
     float initialVacation=totalVacation;
     
     
+    int colorindex=0;  //keep track of current circle color
     
-    color_rgba reducedColor{0,255,0,100};
-    color_rgba fullColor{0,121,241,100};
-    
+
+    Color paletteColor[2]={{0,121,241,200},{44,104,34,200}};
+    //                        0  blue          1 green
 
 
 
@@ -70,7 +64,6 @@ class Gridmaster
 
 
     int boxCounter=0;   //⁡⁣⁣⁢total number of boxes on grid. 7days*5 weeks * 12 months= 420⁡
-    int activePaint=0;  //color/designation to paint days in
     Vector2 monthPosxy{0,0}; //used to specify position on the grid of a particular month
     
 
@@ -89,7 +82,8 @@ class Gridmaster
     void MouseTrap(void); //mouse tracking routine
     int MouseCollision(Vector2); //check the mouse against the grid vector. Return the # of contact rectangle
     void MergeGridwithCalendar(Calendar*); //Merge the calendar of year(int) with the grid
-    void mouseClickChoices(int); //evaluate mouse clicks, make day changes, change paint brush(red v fulltime)
-    
+    void mouseClickChoices(int, Vector2); //evaluate mouse clicks, make day changes, change paint brush(red v fulltime)
+    void adjustTotals(int,float);//call routine to adjust full/reduced/total
+
 };
 
