@@ -83,7 +83,7 @@ class Gridmaster
     int MouseCollision(Vector2); //check the mouse against the grid vector. Return the # of contact rectangle
     void MergeGridwithCalendar(Calendar*); //Merge the calendar of year(int) with the grid
     void mouseClickChoices(int, Vector2); //evaluate mouse clicks, make day changes, change paint brush(red v fulltime)
-    void adjustTotals(int,float);//call routine to adjust full/reduced/total
+    void adjustTotals(int designation,float value);//call routine to adjust full/reduced/total
 
 };
 

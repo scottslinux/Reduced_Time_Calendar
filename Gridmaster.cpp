@@ -406,7 +406,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     
 
 
-    std::cout<<"mouseincircle: "<<mouseInCircle<<" Weekend:"<<weekendFlag<<std::endl;
+    
 
 
     // ⁡⁢⁢⁣⁡⁣⁢⁣𝗖𝗵𝗮𝗻𝗴𝗶𝗻𝗴 𝘁𝗵𝗲 𝗽𝗮𝗶𝗻𝘁 𝗰𝗼𝗹𝗼𝗿 ⁡
@@ -422,37 +422,49 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
 
     if(leftClick && !weekendFlag)
     {
-        //if the day is already active clear it and adjust totals
+
+        //if the day is clear -mark it as a full day in whichever category and adjust totals
         if(dayGrid[gridIndex].designation==0)
         {   
             dayGrid[gridIndex].designation=colorindex+1;
-            fullTimeDays-=1.0;
-            dayGrid[gridIndex].value=1.0;
-            return;         //gotta get out of the routine after a choice is executed
+            Gridmaster::adjustTotals(dayGrid[gridIndex].designation,1);
+            dayGrid[gridIndex].value=1.0;               //attribute full day on that date
+
+            return; //gotta get out of the routine after a choice is executed
         }
 
-        if(dayGrid[gridIndex].designation==1)   //erase a full time day
+
+                 
+    
+        
+
+//erase a day
+        if((dayGrid[gridIndex].designation==1)||(dayGrid[gridIndex].designation==2))   
         {
+            Gridmaster::adjustTotals(dayGrid[gridIndex].designation,dayGrid[gridIndex].value* -1);   //return the time (subtract)
             dayGrid[gridIndex].designation=0;
-            fullTimeDays+=dayGrid[gridIndex].value;   //return the time to the full time days
             dayGrid[gridIndex].value=0;          //take it away from that day
 
-        
+            return;
         }
 
 
     return;
-    }
+    
+}
 }
 //****************************************************************************/
 
-void Gridmaster::adjustTotals(int designation,float value)
+void Gridmaster::adjustTotals(int designation,float value) //1=FullTime 2=Reduced
 {
-    if(designation==1)  //adjustment to full time
-        fullTimeDays+=value;
-    
+    std::cout<<"entering adjusttotals: designation:"<<designation<<" Value:"<<value<<std::endl;
 
+    if(designation==1)  //adjustment to full time (when passing negative one it adds a day that is being returned
+        fullTimeDays-=value;
+        else    
+            reducedTimeDays-=value; //adjust reduced
 
+    totalVacation=fullTimeDays+reducedTimeDays;
 
 
     return;
