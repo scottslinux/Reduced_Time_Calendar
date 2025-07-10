@@ -3,6 +3,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <fstream>
 #include "raylib.h"
 #include "Calendar.h"
 
@@ -86,5 +87,7 @@ class Gridmaster
     void mouseClickChoices(int, Vector2); //evaluate mouse clicks, make day changes, change paint brush(red v fulltime)
     void adjustTotals(int designation,float val);//call routine to adjust full/reduced/total
     void menuchecking(Vector2 mousepos); //check the hover and menu choices
+
+    void SaveCalendarToFile(const std::string& filename, const std::vector<gridData>& calendar);
 };
 

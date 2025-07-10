@@ -1,5 +1,6 @@
 #include "Gridmaster.h"
 #include <iostream>
+#include <fstream>
 #include "raylib.h"
 #include "Calendar.h"
 
@@ -40,7 +41,7 @@ Gridmaster::Gridmaster()
     placeholder.designation=0;
     placeholder.value=0;
 
-    dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
+    dayGrid.resize(505, placeholder);  //this may have fixed the stack slamming exception
 
     
         //debugging
@@ -265,24 +266,25 @@ void Gridmaster::Scoreboard(void)
     Rectangle menu1{Hinterval*4+10,1600,700,100};
     Rectangle menu2{Hinterval*4+10,1710,700,100};
     Rectangle menu3{Hinterval*4+10,1820,700,100};
+    Color buttoncolor=Color{241,198,71,255};
+    Color buttonshadow=Color{148,120,44,255};
+
+    DrawRectangle(menu1.x+12,menu1.y+12,700,100,DARKGRAY);
+    DrawRectangle(menu1.x,menu1.y,700,100,buttoncolor);
+    DrawRectangleLinesEx(menu1,10,buttonshadow);
+
+    DrawRectangle(menu2.x+12,menu2.y+12,700,100,DARKGRAY);
+    DrawRectangle(menu2.x,menu2.y,700,100,buttoncolor);
+    DrawRectangleLinesEx(menu2,10,buttonshadow);
+
+    DrawRectangle(menu3.x+12,menu3.y+12,700,100,DARKGRAY);
+    DrawRectangle(menu3.x,menu3.y,700,100,buttoncolor);
+    DrawRectangleLinesEx(menu3,10,buttonshadow);
 
 
-    DrawRectangle(menu1.x+5,menu1.y+5,700,100,BLACK);
-    DrawRectangle(menu1.x,menu1.y,700,100,LIGHTGRAY);
-    DrawRectangleLinesEx(menu1,10,GRAY);
-
-    DrawRectangle(menu2.x+5,menu2.y+5,700,100,BLACK);
-    DrawRectangle(menu2.x,menu2.y,700,100,LIGHTGRAY);
-    DrawRectangleLinesEx(menu2,10,GRAY);
-
-    DrawRectangle(menu3.x+5,menu3.y+5,700,100,BLACK);
-    DrawRectangle(menu3.x,menu3.y,700,100,LIGHTGRAY);
-    DrawRectangleLinesEx(menu3,10,GRAY);
-
-
-    DrawTextEx(marker,"Save Current Calendar",Vector2{Hinterval*4+35,1600},100,0,BLACK);
-    DrawTextEx(marker,"Load Existing Calendar ",Vector2{Hinterval*4+35,1705},100,0,BLACK);
-    DrawTextEx(marker,"Create New Calendar",Vector2{Hinterval*4+50,1820},100,0,BLACK);
+    DrawTextEx(marker,"Save Current Calendar",Vector2{Hinterval*4+90,1610},80,0,BLACK);
+    DrawTextEx(marker,"Load Existing Calendar ",Vector2{Hinterval*4+95,1710},80,0,BLACK);
+    DrawTextEx(marker,"Create New Calendar",Vector2{Hinterval*4+100,1820},80,0,BLACK);
     
     
 
@@ -326,6 +328,8 @@ void Gridmaster::MouseTrap()
     currentsquare=Gridmaster::MouseCollision(mousepos); //get the current index for the square
 
     Gridmaster::mouseClickChoices(currentsquare, mousepos);
+
+    Gridmaster::menuchecking(mousepos);
 
     
 
@@ -527,4 +531,84 @@ void Gridmaster::adjustTotals(int designation,float val) //1=FullTime 2=Reduced
 
 
     return;
+}
+//****************************************************************************/
+
+void Gridmaster::menuchecking(Vector2 mousepos)
+{
+    //load the rectangels from the menu drawing area
+    std::vector<Rectangle>  menurects{
+    {Hinterval*4+10,1600,700,100},{Hinterval*4+10,1710,700,100},{Hinterval*4+10,1820,700,100}};
+
+    for(int i=0;i<3;i++)        //0: save   1: load    2: create new
+    {
+
+        if (CheckCollisionPointRec(mousepos,menurects[i]))
+        {
+            DrawRectangleLinesEx(menurects[i],15,YELLOW);
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            {
+                if(i==0)
+                {   std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
+
+                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
+                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
+
+                    std::cout<<"File Saved Successfully.....\n";
+
+                }
+                //-------------------------------------------------
+                if(i==1)
+                {
+                std::cout<<"In the load routine.....\n";
+                }
+                //-------------------------------------------------
+                if(i==2)
+                {
+                std::cout<<"In the new routine.....\n";
+                }
+
+
+
+            }
+        }
+
+
+
+
+    }
+
+
+
+
+
+        return;
+}
+//******************************************************************************/
+//A little chat GPT help. Takes a filename string and a vector(dayGrid)
+void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vector<gridData>& calendar)
+{
+    std::ofstream outFile(filename);   //create an object of type ofstream attached to filename
+    
+    if (!outFile.is_open()) {
+    std::cerr << "Failed to open file for writing!\n";
+    return;
+}
+
+
+    for (const auto& day : calendar)
+    {
+        outFile<<day.activeBox<<" "<<day.blackout<<" "<<day.dayofweek<<" "<<day.dayRect.x<<" "
+            <<day.dayRect.y<<" "<<day.dayRect.height<<" "" "<<day.dayRect.width<<" "<<day.dayValue
+            <<" "<<day.designation<<" "<<day.month<<" "<<day.value<<" "<<day.year<<"\n";
+
+day.
+    }
+
+    outFile.close();
+
+    return;
+
+
+
 }
