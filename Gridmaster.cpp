@@ -602,7 +602,7 @@ void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vect
             <<day.dayRect.y<<" "<<day.dayRect.height<<" "" "<<day.dayRect.width<<" "<<day.dayValue
             <<" "<<day.designation<<" "<<day.month<<" "<<day.value<<" "<<day.year<<"\n";
 
-day.
+
     }
 
     outFile.close();
