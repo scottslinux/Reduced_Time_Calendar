@@ -41,7 +41,7 @@ Gridmaster::Gridmaster()
     placeholder.designation=0;
     placeholder.value=0;
 
-    dayGrid.resize(505, placeholder);  //this may have fixed the stack slamming exception
+    dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
 
     
         //debugging
@@ -302,6 +302,7 @@ if(!menuflag)   //display the main choices unless the dialogue box is up
             Rectangle cancelrect=Rectangle{Hinterval*4+375,1745,300,70};
 
             int choice=Gridmaster::submenuCheck(okayrect,cancelrect);
+                
             
 
             
@@ -309,9 +310,32 @@ if(!menuflag)   //display the main choices unless the dialogue box is up
 
 
         }
+    if (loadgraphflag)
+    {
+        DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
+        graphtimer+=GetFrameTime()*200;
+
+        if(graphtimer<600)
+        {
+            DrawRectangle(Hinterval*4+50,2100,600-(600-graphtimer),15,RED);
+            DrawTextEx(marker,"LOADING CALENDAR",Vector2{Hinterval*4+150,2000},
+                60,0,Color{39,75,43,255});
+
+            std::cout<<"Graphtimer: "<<graphtimer<<std::endl;
+
+
+        }
+                else
+                {
+                    loadgraphflag=false;
+                    Gridmaster::loadCalendarfromFile("Reduced_time_2026.txt");
+                }
+
+
+
+    }
+
     
-
-
     return;
 }
 
@@ -344,7 +368,7 @@ void Gridmaster::MouseTrap()
 {
     Vector2 mousepos;
     std::string positionReadout;
-    int currentsquare=999;
+    int currentsquare=0;
 
     mousepos=GetMousePosition(); //shows highligted square on current mouse pos
 
@@ -460,20 +484,18 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     //valid day with shift down...add quarter day
     //**⁡⁣⁢⁣𝘊𝘳𝘦𝘢𝘵𝘪𝘯𝘨 𝘧𝘭𝘢𝘨𝘴 𝘧𝘰𝘳 𝘤𝘭𝘢𝘳𝘪𝘵𝘺 𝘪𝘯 𝘥𝘦𝘤𝘪𝘴𝘪𝘰𝘯 𝘵𝘳𝘦𝘦⁡ */
 
+    
+
+    
 
     bool shiftFlag=(IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown((KEY_RIGHT_SHIFT)));  //for quarter days
     bool mouseInCircle=CheckCollisionPointCircle(mousepos,Vector2{(float)(Hinterval*4+Hinterval/2),1350},100);
     bool leftClick=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
     bool rightClick=IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
-    bool weekendFlag=((dayGrid[gridIndex].dayofweek==0)||(dayGrid[gridIndex].dayofweek==1));
-    bool activeDay=(dayGrid[gridIndex].designation);
-
     
 
-
+  
     
-
-
     // ⁡⁢⁢⁣⁡⁣⁢⁣𝗖𝗵𝗮𝗻𝗴𝗶𝗻𝗴 𝘁𝗵𝗲 𝗽𝗮𝗶𝗻𝘁 𝗰𝗼𝗹𝗼𝗿 ⁡
     if(mouseInCircle && leftClick)
     {
@@ -481,6 +503,12 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
         if(colorindex>1) colorindex=0;
         return;
     }
+    bool weekendFlag=((dayGrid[gridIndex].dayofweek==0)||(dayGrid[gridIndex].dayofweek==1));
+    bool activeDay=(dayGrid[gridIndex].designation);
+
+ 
+
+
     //⁡⁣⁢⁣𝗥𝗶𝗴𝗵𝘁 𝗰𝗹𝗶𝗰𝗸--𝗮𝗱𝗱𝗶𝗻𝗴 𝗯𝗹𝗮𝗰𝗸𝗼𝘂𝘁 𝗱𝗮𝘁𝗲𝘀⁡
     if(rightClick)  //mark blackout dates
         {
@@ -571,30 +599,17 @@ void Gridmaster::menuchecking(Vector2 mousepos)
             if(!menuflag)   //if dialoguing do not display choice bars
                 DrawRectangleLinesEx(menurects[i],15,YELLOW);
 
-            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)&& i==0)
             {
                 menuflag=true;  //trigger the dialogue box
+                //this opens the dialogue for the save button
+               
 
-                if(i==0)
-                {   std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
-
-                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
-                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
-
-                    std::cout<<"File Saved Successfully.....\n";
-
-                }
-                //-------------------------------------------------
-                if(i==1)
-                {
-                std::cout<<"In the load routine.....\n";
-                }
-                //-------------------------------------------------
-                if(i==2)
-                {
-                std::cout<<"In the new routine.....\n";
-                }
-
+            }
+            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)&& i==1)
+            {
+                loadgraphflag=true;
+                graphtimer=10.0;
 
 
             }
@@ -651,6 +666,15 @@ int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
                 {
                     menuflag=false;
                     SetMousePosition(Hinterval*4+50,2000);
+                    std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
+                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
+                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
+
+                    std::cout<<"File Saved Successfully.....\n";
+
+
+
+
                     return 1;   //end the dialogue and return choice 1. OKAY
                 }
             }
@@ -661,6 +685,9 @@ int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
                 {
                     menuflag=false;
                     SetMousePosition(Hinterval*4+50,2000);
+                    std::cout<<"File Operation Cancelled\n";
+
+
                     return 2;   //end the dialogue and return choice 2. NOPE
                 }
             }
@@ -672,3 +699,58 @@ int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
 
 }
 //******************************************************************************/
+//Loads from a saved Calendar...need to scan day totals
+
+int Gridmaster::loadCalendarfromFile(std::string filename)
+{
+        std::cout << "Starting loadCalendarfromFile" << std::endl;
+
+    std::ifstream inputfile(filename);
+
+    if(!inputfile.is_open())
+    {
+        std::cout<<"*** Unable to open "<<filename<<std::endl;
+        return 0;
+    }
+    for(auto& day: dayGrid)
+    {
+        inputfile>>day.activeBox;
+        inputfile>>day.blackout;
+        inputfile>>day.dayofweek;
+        inputfile>>day.dayRect.x;
+        inputfile>>day.dayRect.y;
+        inputfile>>day.dayRect.height;
+        inputfile>>day.dayRect.width;
+        inputfile>>day.dayValue;
+        inputfile>>day.designation;
+        inputfile>>day.month;
+        inputfile>>day.value;
+        inputfile>>day.year;
+
+
+
+
+    }
+
+    inputfile.close();
+
+    //reset the days before calculating how they were reduced
+    fullTimeDays=fulltimeallotment;
+    reducedTimeDays=reducedtimeallotment;
+
+    for( auto& day: dayGrid)
+    {
+        if(day.designation==1)
+            fullTimeDays-=day.value;
+        if(day.designation==2)
+            reducedTimeDays-=day.value;
+
+
+    }
+    totalVacation=fullTimeDays+reducedTimeDays;
+
+
+
+return 1;
+
+}

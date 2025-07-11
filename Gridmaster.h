@@ -44,12 +44,17 @@ class Gridmaster
     static Font dayfont;
     static Font marker;
 
+    float fulltimeallotment=45.0;
+    float reducedtimeallotment=46.0;
+
     float totalVacation=91.0;
     float fullTimeDays=45.0;
     float reducedTimeDays=46.0;
     float initialVacation=totalVacation;
 
     bool menuflag=false; //file menu choice display flag
+    bool loadgraphflag=false;
+    float graphtimer=0;
     
     
     int colorindex=0;  //keep track of current circle color
@@ -61,7 +66,7 @@ class Gridmaster
 
 
     //  Monitor specific information needs to execute and define in constructor
-    int monWidth;; 
+    int monWidth;
     int monHeight;
     int Hinterval;
     int Vinterval;
@@ -89,8 +94,8 @@ class Gridmaster
     void mouseClickChoices(int, Vector2); //evaluate mouse clicks, make day changes, change paint brush(red v fulltime)
     void adjustTotals(int designation,float val);//call routine to adjust full/reduced/total
     void menuchecking(Vector2 mousepos); //check the hover and menu choices
-
     void SaveCalendarToFile(const std::string& filename, const std::vector<gridData>& calendar);
     int submenuCheck(Rectangle,Rectangle); //check results from dialogue box
+    int loadCalendarfromFile(std::string filename); //most important..overwrite existing calendar with saved
 };
 
