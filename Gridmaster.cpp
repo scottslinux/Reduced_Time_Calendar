@@ -19,7 +19,7 @@ Gridmaster::Gridmaster()
     
     Gridmaster::monthfont=LoadFontEx("./resources/calfont.ttf",80,NULL,0);
     Gridmaster::dayfont=LoadFontEx("./resources/days.ttf",100,NULL,0);
-    Gridmaster::marker=LoadFont("./resources/Marker Felt.ttf");
+    Gridmaster::marker=LoadFont("./resources/mono.ttf");
 
   
     monWidth=GetScreenWidth();    //initialize to monitor size and calculate everything else
@@ -269,6 +269,10 @@ void Gridmaster::Scoreboard(void)
     Color buttoncolor=Color{241,198,71,255};
     Color buttonshadow=Color{148,120,44,255};
 
+
+if(!menuflag)   //display the main choices unless the dialogue box is up
+{
+
     DrawRectangle(menu1.x+12,menu1.y+12,700,100,DARKGRAY);
     DrawRectangle(menu1.x,menu1.y,700,100,buttoncolor);
     DrawRectangleLinesEx(menu1,10,buttonshadow);
@@ -282,10 +286,29 @@ void Gridmaster::Scoreboard(void)
     DrawRectangleLinesEx(menu3,10,buttonshadow);
 
 
-    DrawTextEx(marker,"Save Current Calendar",Vector2{Hinterval*4+90,1610},80,0,BLACK);
-    DrawTextEx(marker,"Load Existing Calendar ",Vector2{Hinterval*4+95,1710},80,0,BLACK);
-    DrawTextEx(marker,"Create New Calendar",Vector2{Hinterval*4+100,1820},80,0,BLACK);
-    
+    DrawTextEx(marker,"Save Current Calendar",Vector2{Hinterval*4+90,1630},50,0,BLACK);
+    DrawTextEx(marker,"Load Existing Calendar ",Vector2{Hinterval*4+95,1730},50,0,BLACK);
+    DrawTextEx(marker,"Create New Calendar",Vector2{Hinterval*4+100,1850},50,0,BLACK);
+}
+    else
+        {
+            DrawRectangle(Hinterval*4+10,1600,700,400,BLACK);
+            DrawRectangleLinesEx(Rectangle{Hinterval*4+10,1600,700,400},10,LIGHTGRAY);
+
+            DrawTextEx(marker,"File Exists....Overwrite?",Vector2{Hinterval*4+25,1650},57,0,Color{71,176,26,255});
+            DrawTextEx(marker,"   OKAY           CANCEL",Vector2{Hinterval*4+25,1750},50,0,Color{71,176,26,255});
+         
+            Rectangle okayrect=Rectangle{Hinterval*4+25,1745,350,70};
+            Rectangle cancelrect=Rectangle{Hinterval*4+375,1745,300,70};
+
+            int choice=Gridmaster::submenuCheck(okayrect,cancelrect);
+            
+
+            
+
+
+
+        }
     
 
 
@@ -545,9 +568,13 @@ void Gridmaster::menuchecking(Vector2 mousepos)
 
         if (CheckCollisionPointRec(mousepos,menurects[i]))
         {
-            DrawRectangleLinesEx(menurects[i],15,YELLOW);
+            if(!menuflag)   //if dialoguing do not display choice bars
+                DrawRectangleLinesEx(menurects[i],15,YELLOW);
+
             if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
             {
+                menuflag=true;  //trigger the dialogue box
+
                 if(i==0)
                 {   std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
 
@@ -612,3 +639,36 @@ void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vect
 
 
 }
+//******************************************************************************/
+int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
+{
+    float timedelay=0;
+
+    if(CheckCollisionPointRec(GetMousePosition(),choice1))
+            {
+                DrawRectangleLinesEx(choice1,5,RED);
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                {
+                    menuflag=false;
+                    SetMousePosition(Hinterval*4+50,2000);
+                    return 1;   //end the dialogue and return choice 1. OKAY
+                }
+            }
+    if(CheckCollisionPointRec(GetMousePosition(),choice2))
+            {
+                DrawRectangleLinesEx(choice2,5,RED);
+                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
+                {
+                    menuflag=false;
+                    SetMousePosition(Hinterval*4+50,2000);
+                    return 2;   //end the dialogue and return choice 2. NOPE
+                }
+            }
+            
+
+    return 0;
+
+
+
+}
+//******************************************************************************/

@@ -48,6 +48,8 @@ class Gridmaster
     float fullTimeDays=45.0;
     float reducedTimeDays=46.0;
     float initialVacation=totalVacation;
+
+    bool menuflag=false; //file menu choice display flag
     
     
     int colorindex=0;  //keep track of current circle color
@@ -89,5 +91,6 @@ class Gridmaster
     void menuchecking(Vector2 mousepos); //check the hover and menu choices
 
     void SaveCalendarToFile(const std::string& filename, const std::vector<gridData>& calendar);
+    int submenuCheck(Rectangle,Rectangle); //check results from dialogue box
 };
 
