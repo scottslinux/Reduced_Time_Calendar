@@ -41,6 +41,7 @@ Gridmaster::Gridmaster()
     placeholder.designation=0;
     placeholder.value=0;
 
+    //⁡⁣⁢⁣​‌‍‌ℂℝ𝔼𝔸𝕋𝔼 𝕋ℍ𝔼 𝔻𝔸𝕐𝔾ℝ𝕀𝔻 𝕍𝔼ℂ𝕋𝕆ℝ 𝕀ℕ𝕀𝕋𝕀𝔸𝕃𝕀ℤ𝔼𝔻 𝕎𝕀𝕋ℍ 𝔻𝔼𝔽𝔸𝕌𝕃𝕋​⁡
     dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
 
     
@@ -408,11 +409,11 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
         
     }
     if(!flag)
-        contactedSquare=999;
-    //squarestr="BOX NUM: "+std::to_string(contactedSquare);
-    //DrawTextEx(monthfont,squarestr.c_str(),Vector2{4*(float)Hinterval+100,(float)Vinterval+100},80,0,BLUE);
+        contactedSquare=550; //make this the signal that no valid square exists
+                             //still in the vector--no overflow was 999 :(
     
-    if(contactedSquare!=999)
+    
+    if(contactedSquare!=550)
         DrawRectangleRec(dayGrid[contactedSquare].dayRect,Color{0,20,200,50});
         
 
@@ -492,7 +493,8 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     bool mouseInCircle=CheckCollisionPointCircle(mousepos,Vector2{(float)(Hinterval*4+Hinterval/2),1350},100);
     bool leftClick=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
     bool rightClick=IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
-    
+    bool weekendFlag=((dayGrid[gridIndex].dayofweek==0)||(dayGrid[gridIndex].dayofweek==1));
+    bool activeDay=(dayGrid[gridIndex].designation);
 
   
     
@@ -503,8 +505,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
         if(colorindex>1) colorindex=0;
         return;
     }
-    bool weekendFlag=((dayGrid[gridIndex].dayofweek==0)||(dayGrid[gridIndex].dayofweek==1));
-    bool activeDay=(dayGrid[gridIndex].designation);
+    
 
  
 
@@ -524,7 +525,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     //-------------------------------------------
     // ⁡⁣⁢⁣Mouse Clicking on a VALID Day that is not a weekend???⁡
 
-    if(leftClick && !weekendFlag)
+    if(leftClick && !weekendFlag && (gridIndex !=550))  //click, non-weekend, in the grid
     {
         if(dayGrid[gridIndex].value<1 && shiftFlag)  //⁡⁣⁣⁢𝘀𝗵𝗶𝗳𝘁= 𝘄𝗼𝗿𝗸𝗶𝗻𝗴 𝘄𝗶𝘁𝗵 𝗾𝘂𝗮𝗿𝘁𝗲𝗿 𝗱𝗮𝘆𝘀⁡ val<1 either 0 or fractional
         {   
