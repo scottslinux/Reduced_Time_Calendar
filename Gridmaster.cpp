@@ -187,7 +187,14 @@ void Gridmaster::DrawdayGrid(int month)
             DrawRectangleLinesEx(Rectangle{currday.x,currday.y,(float)cellWidth,(float)cellHeight},
                                     10,Color{205,155,255,255});
         }
-        
+        if(dayGrid[boxCounter].activeBox)
+        {
+            DrawRectangle(currday.x,currday.y,10,10,Color{55,74,45,255});
+        }
+
+
+
+
         //increment the gridbox counter
 
         boxCounter++;
@@ -314,7 +321,7 @@ if(!menuflag)   //display the main choices unless the dialogue box is up
     if (loadgraphflag)
     {
         DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
-        graphtimer+=GetFrameTime()*200;
+        graphtimer+=GetFrameTime()*300;
 
         if(graphtimer<600)
         {
@@ -490,6 +497,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     
 
     bool shiftFlag=(IsKeyDown(KEY_LEFT_SHIFT)||IsKeyDown((KEY_RIGHT_SHIFT)));  //for quarter days
+    bool ctrlFlag=(IsKeyDown(KEY_LEFT_CONTROL)||(IsKeyDown(KEY_RIGHT_CONTROL)));//confirmed with VAC
     bool mouseInCircle=CheckCollisionPointCircle(mousepos,Vector2{(float)(Hinterval*4+Hinterval/2),1350},100);
     bool leftClick=IsMouseButtonPressed(MOUSE_BUTTON_LEFT);
     bool rightClick=IsMouseButtonPressed(MOUSE_BUTTON_RIGHT);
@@ -537,6 +545,17 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
             return; //gotta get out of the routine after a choice is executed
         }
 
+        if(leftClick && ctrlFlag)   //note the day as confirmed with Valley (can toggle on and off
+        {
+            if(dayGrid[gridIndex].activeBox==0)
+                dayGrid[gridIndex].activeBox=1;
+                    else
+                    dayGrid[gridIndex].activeBox=0;
+
+            return; //exit before the click triggers anything else
+
+
+        }
 
         //if the day is clear -mark it as a full day in whichever category and adjust totals
         if(dayGrid[gridIndex].designation==0)
