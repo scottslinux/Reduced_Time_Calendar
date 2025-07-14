@@ -3,6 +3,7 @@
 #include <fstream>
 #include "raylib.h"
 #include "Calendar.h"
+#include "Menu.h"
 
 
 
@@ -56,6 +57,8 @@ Gridmaster::~Gridmaster()   //destructor Called Automatically by C++
 {
     //delete calendarYear;  // Clean up the dynamically allocated Calendar
     //calendarYear = nullptr; // Good practice to set to nullptr
+
+    userMenu.unloadresources();
 }
 
 //********************************************************
@@ -298,26 +301,37 @@ if(!menuflag)   //display the main choices unless the dialogue box is up
     DrawTextEx(marker,"Load Existing Calendar ",Vector2{Hinterval*4+95,1730},50,0,BLACK);
     DrawTextEx(marker,"Create New Calendar",Vector2{Hinterval*4+100,1850},50,0,BLACK);
 }
+    
     else
+            //-------------------------------------------------------------------------------------------
         {
-            DrawRectangle(Hinterval*4+10,1600,700,400,BLACK);
-            DrawRectangleLinesEx(Rectangle{Hinterval*4+10,1600,700,400},10,LIGHTGRAY);
+            //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
+            //  ⁡⁣⁣⁢Appears and disappears with menuflag boolean⁡
 
-            DrawTextEx(marker,"File Exists....Overwrite?",Vector2{Hinterval*4+25,1650},57,0,Color{71,176,26,255});
-            DrawTextEx(marker,"   OKAY           CANCEL",Vector2{Hinterval*4+25,1750},50,0,Color{71,176,26,255});
-         
-            Rectangle okayrect=Rectangle{Hinterval*4+25,1745,350,70};
-            Rectangle cancelrect=Rectangle{Hinterval*4+375,1745,300,70};
+            std::vector<std::string> menuitems{"Replace File","Cancel"};
+            int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,2000},50);
+            if(choice==1)
+            {
+                    menuflag=false;
+                    SetMousePosition(Hinterval*4+50,2000);
+                    std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
+                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
+                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
 
-            int choice=Gridmaster::submenuCheck(okayrect,cancelrect);
-                
-            
+                    std::cout<<"File Saved Successfully.....\n";
 
-            
+       
+            }
+            if(choice==2)
+            {
+                    menuflag=false;
+                    std::cout<<"exiting without change..."<<std::endl;
 
+            }
 
 
         }
+            //-----------------------------------------------------------------------------------------------
     if (loadgraphflag)
     {
         DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
@@ -686,7 +700,7 @@ int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
                 {
                     menuflag=false;
                     SetMousePosition(Hinterval*4+50,2000);
-                    std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
+                    std::string filename="Reduced_time_"+std::to_string(20262)+".txt";
                     std::cout<<"Saving the current calendar as "<<filename<<std::endl;
                     Gridmaster::SaveCalendarToFile(filename,dayGrid);
 

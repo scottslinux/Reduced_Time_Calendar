@@ -11,6 +11,8 @@ int main()
    
 
     InitWindow(GetMonitorWidth(0),GetMonitorHeight(0),"Reduced Time");
+    InitAudioDevice();
+
     SetWindowPosition(300,300);
     SetTargetFPS(60);
 
@@ -49,7 +51,7 @@ int main()
     
 
     
-
+    CloseAudioDevice();
     return 0;
     
 } 

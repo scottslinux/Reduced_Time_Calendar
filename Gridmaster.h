@@ -6,6 +6,7 @@
 #include <fstream>
 #include "raylib.h"
 #include "Calendar.h"
+#include "Menu.h"
 
 
 // Structure of each grid data box
@@ -48,8 +49,8 @@ class Gridmaster
     float reducedtimeallotment=46.0;
 
     float totalVacation=91.0;
-    float fullTimeDays=45.0;
-    float reducedTimeDays=46.0;
+    float fullTimeDays=40.0;
+    float reducedTimeDays=51.0;
     float initialVacation=totalVacation;
 
     bool menuflag=false; //file menu choice display flag
@@ -74,7 +75,7 @@ class Gridmaster
 
     int boxCounter=0;   //⁡⁣⁣⁢total number of boxes on grid. 7days*5 weeks * 12 months= 420⁡
     Vector2 monthPosxy{0,0}; //used to specify position on the grid of a particular month
-    
+    Menu userMenu;
 
 
 

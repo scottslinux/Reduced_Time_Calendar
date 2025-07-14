@@ -4,8 +4,8 @@
         {
             "label": "build",
             "type": "shell",
-            "command": "make",
-            "args": ["all"],
+            "command": "bash",
+            "args": ["-c", "make clean && make all"],
             "group": {
                 "kind": "build",
                 "isDefault": true
