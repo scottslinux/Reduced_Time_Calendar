@@ -283,23 +283,29 @@ void Gridmaster::Scoreboard(void)
 
 if(!menuflag)   //display the main choices unless the dialogue box is up
 {
+    std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar"};
 
-    DrawRectangle(menu1.x+12,menu1.y+12,700,100,DARKGRAY);
-    DrawRectangle(menu1.x,menu1.y,700,100,buttoncolor);
-    DrawRectangleLinesEx(menu1,10,buttonshadow);
+    int selection=userMenu.displayMenu(options1,{3100,1800},60);
+    
+    switch (selection)  //int returned from the menu selection
+    {
+    case 1:                     //Save Case -->opens confirmation menu for (exists...save/cancel
+        menuflag=true;
+        break;
+    case 2:                     //load menu....will open choices of which file
+        loadgraphflag=true;
+        break;
+    case 3:                     //will eventually allow creation of new years schedule
+        
+        break;
+    
+    default:
+        break;
+    }
+    
 
-    DrawRectangle(menu2.x+12,menu2.y+12,700,100,DARKGRAY);
-    DrawRectangle(menu2.x,menu2.y,700,100,buttoncolor);
-    DrawRectangleLinesEx(menu2,10,buttonshadow);
 
-    DrawRectangle(menu3.x+12,menu3.y+12,700,100,DARKGRAY);
-    DrawRectangle(menu3.x,menu3.y,700,100,buttoncolor);
-    DrawRectangleLinesEx(menu3,10,buttonshadow);
-
-
-    DrawTextEx(marker,"Save Current Calendar",Vector2{Hinterval*4+90,1630},50,0,BLACK);
-    DrawTextEx(marker,"Load Existing Calendar ",Vector2{Hinterval*4+95,1730},50,0,BLACK);
-    DrawTextEx(marker,"Create New Calendar",Vector2{Hinterval*4+100,1850},50,0,BLACK);
+  
 }
     
     else
@@ -309,11 +315,10 @@ if(!menuflag)   //display the main choices unless the dialogue box is up
             //  ⁡⁣⁣⁢Appears and disappears with menuflag boolean⁡
 
             std::vector<std::string> menuitems{"Replace File","Cancel"};
-            int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,2000},50);
+            int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,1800},50);
             if(choice==1)
             {
                     menuflag=false;
-                    SetMousePosition(Hinterval*4+50,2000);
                     std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
                     std::cout<<"Saving the current calendar as "<<filename<<std::endl;
                     Gridmaster::SaveCalendarToFile(filename,dayGrid);
@@ -398,7 +403,7 @@ void Gridmaster::MouseTrap()
 
     Gridmaster::mouseClickChoices(currentsquare, mousepos);
 
-    Gridmaster::menuchecking(mousepos);
+    //Gridmaster::menuchecking(mousepos);   this was the old menu handling routine....before the class
 
     
 
