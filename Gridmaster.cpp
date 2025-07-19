@@ -281,62 +281,14 @@ void Gridmaster::Scoreboard(void)
     Color buttonshadow=Color{148,120,44,255};
 
 
-if(!menuflag)   //display the main choices unless the dialogue box is up
-{
-    std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar"};
-
-    int selection=userMenu.displayMenu(options1,{3100,1800},60);
-    
-    switch (selection)  //int returned from the menu selection
-    {
-    case 1:                     //Save Case -->opens confirmation menu for (exists...save/cancel
-        menuflag=true;
-        break;
-    case 2:                     //load menu....will open choices of which file
-        loadgraphflag=true;
-        break;
-    case 3:                     //will eventually allow creation of new years schedule
-        
-        break;
-    
-    default:
-        break;
-    }
-    
 
 
+    menuserver();   //service the menus
   
-}
+
     
-    else
-            //-------------------------------------------------------------------------------------------
-        {
-            //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
-            //  ⁡⁣⁣⁢Appears and disappears with menuflag boolean⁡
-
-            std::vector<std::string> menuitems{"Replace File","Cancel"};
-            int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,1800},50);
-            if(choice==1)
-            {
-                    menuflag=false;
-                    std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
-                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
-                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
-
-                    std::cout<<"File Saved Successfully.....\n";
-
-       
-            }
-            if(choice==2)
-            {
-                    menuflag=false;
-                    std::cout<<"exiting without change..."<<std::endl;
-
-            }
-
-
-        }
-            //-----------------------------------------------------------------------------------------------
+    
+    //-----------------------------------------------------------------------------------------------
     if (loadgraphflag)
     {
         DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
@@ -635,12 +587,12 @@ void Gridmaster::menuchecking(Vector2 mousepos)
 
         if (CheckCollisionPointRec(mousepos,menurects[i]))
         {
-            if(!menuflag)   //if dialoguing do not display choice bars
+            if(!mainMenuflag)   //if dialoguing do not display choice bars
                 DrawRectangleLinesEx(menurects[i],15,YELLOW);
 
             if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)&& i==0)
             {
-                menuflag=true;  //trigger the dialogue box
+                mainMenuflag=true;  //trigger the dialogue box
                 //this opens the dialogue for the save button
                
 
@@ -703,7 +655,7 @@ int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
                 DrawRectangleLinesEx(choice1,5,RED);
                 if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 {
-                    menuflag=false;
+                    mainMenuflag=false;
                     SetMousePosition(Hinterval*4+50,2000);
                     std::string filename="Reduced_time_"+std::to_string(20262)+".txt";
                     std::cout<<"Saving the current calendar as "<<filename<<std::endl;
@@ -722,7 +674,7 @@ int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
                 DrawRectangleLinesEx(choice2,5,RED);
                 if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
                 {
-                    menuflag=false;
+                    mainMenuflag=false;
                     SetMousePosition(Hinterval*4+50,2000);
                     std::cout<<"File Operation Cancelled\n";
 
@@ -793,3 +745,64 @@ int Gridmaster::loadCalendarfromFile(std::string filename)
 return 1;
 
 }
+//******************************************************************************/
+//                           Menu Server
+
+void Gridmaster::menuserver(void)
+{
+    if(!mainMenuflag)   //display the main choices unless the dialogue box is up
+    {
+        std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar"};
+
+        int selection=userMenu.displayMenu(options1,{3100,1800},60);
+        
+        switch (selection)  //int returned from the menu selection
+        {
+        case 1:                     //Save Case -->opens confirmation menu for (exists...save/cancel
+            mainMenuflag=true;
+            break;
+        case 2:                     //load menu....will open choices of which file
+            loadgraphflag=true;
+            break;
+        case 3:                     //will eventually allow creation of new years schedule
+            
+            break;
+        
+        default:
+            break;
+        }
+    }  
+else
+            //-------------------------------------------------------------------------------------------
+        {
+            //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
+            //  ⁡⁣⁣⁢Appears and disappears with mainMenuflag boolean⁡
+
+            std::vector<std::string> menuitems{"Replace File","Cancel"};
+            int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,1800},50);
+            if(choice==1)
+            {
+                    mainMenuflag=false;
+                    std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
+                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
+                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
+
+                    std::cout<<"File Saved Successfully.....\n";
+
+       
+            }
+            if(choice==2)
+            {
+                    mainMenuflag=false;
+                    std::cout<<"exiting without change..."<<std::endl;
+
+            }
+
+
+        }
+
+
+
+
+}
+

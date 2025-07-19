@@ -53,8 +53,11 @@ class Gridmaster
     float reducedTimeDays=51.0;
     float initialVacation=totalVacation;
 
-    bool menuflag=false; //file menu choice display flag
-    bool loadgraphflag=false;
+    bool mainMenuflag=false; //file menu choice display flag
+    bool replaceMenuflag=false; //file exists menu
+    bool loadMenuflag=false; //choosing which file to load
+    bool loadgraphflag=false; //flag to keep loading graph alive
+    
     float graphtimer=0;
     
     
@@ -98,5 +101,6 @@ class Gridmaster
     void SaveCalendarToFile(const std::string& filename, const std::vector<gridData>& calendar);
     int submenuCheck(Rectangle,Rectangle); //check results from dialogue box
     int loadCalendarfromFile(std::string filename); //most important..overwrite existing calendar with saved
+    void menuserver(void); //all menu functions in one convenient sexy place
 };
 
