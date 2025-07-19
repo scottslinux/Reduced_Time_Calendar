@@ -12,7 +12,7 @@ RAYLIBINCLUDES = /usr/local/include
 RAYLIB_LIBRARY= /usr/local/lib 
 
 # Compiler flags, include flags, linker flags, and library locations
-CXXFLAGS = -Wall -Wextra -g -std=c++14 -I$(RAYLIBINCLUDES)
+CXXFLAGS = -Wall -Wextra -g -std=c++17 -I$(RAYLIBINCLUDES)
 LDFLAGS = -L$(RAYLIB_LIBRARY) -lraylib -lbox2d -lm -ldl -lpthread -lrt -lX11 
 
 # Project name and target executable

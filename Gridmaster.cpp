@@ -1,11 +1,12 @@
 #include "Gridmaster.h"
 #include <iostream>
 #include <fstream>
+#include <filesystem>
 #include "raylib.h"
 #include "Calendar.h"
 #include "Menu.h"
 
-
+namespace fs = std::filesystem;
 
 
 Font Gridmaster::monthfont;
@@ -645,56 +646,13 @@ void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vect
 
 
 }
-//******************************************************************************/
-int Gridmaster::submenuCheck(Rectangle choice1, Rectangle choice2)
-{
-    float timedelay=0;
 
-    if(CheckCollisionPointRec(GetMousePosition(),choice1))
-            {
-                DrawRectangleLinesEx(choice1,5,RED);
-                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                {
-                    mainMenuflag=false;
-                    SetMousePosition(Hinterval*4+50,2000);
-                    std::string filename="Reduced_time_"+std::to_string(20262)+".txt";
-                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
-                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
-
-                    std::cout<<"File Saved Successfully.....\n";
-
-
-
-
-                    return 1;   //end the dialogue and return choice 1. OKAY
-                }
-            }
-    if(CheckCollisionPointRec(GetMousePosition(),choice2))
-            {
-                DrawRectangleLinesEx(choice2,5,RED);
-                if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
-                {
-                    mainMenuflag=false;
-                    SetMousePosition(Hinterval*4+50,2000);
-                    std::cout<<"File Operation Cancelled\n";
-
-
-                    return 2;   //end the dialogue and return choice 2. NOPE
-                }
-            }
-            
-
-    return 0;
-
-
-
-}
 //******************************************************************************/
 //Loads from a saved Calendar...need to scan day totals
 
 int Gridmaster::loadCalendarfromFile(std::string filename)
 {
-        std::cout << "Starting loadCalendarfromFile" << std::endl;
+    std::cout << "Starting loadCalendarfromFile" << std::endl;
 
     std::ifstream inputfile(filename);
 
@@ -750,7 +708,9 @@ return 1;
 
 void Gridmaster::menuserver(void)
 {
-    if(!mainMenuflag)   //display the main choices unless the dialogue box is up
+
+
+    if(mainMenuflag)   //display the main choices unless the dialogue box is up
     {
         std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar"};
 
@@ -759,11 +719,19 @@ void Gridmaster::menuserver(void)
         switch (selection)  //int returned from the menu selection
         {
         case 1:                     //Save Case -->opens confirmation menu for (exists...save/cancel
-            mainMenuflag=true;
+            mainMenuflag=false;
+            replaceMenuflag=true;
             break;
+        //------------------------------------------
         case 2:                     //load menu....will open choices of which file
-            loadgraphflag=true;
+            {
+                //loadgraphflag=true;
+                mainMenuflag=false;
+                loadMenuflag=true;
+
+            }
             break;
+        //------------------------------------------
         case 3:                     //will eventually allow creation of new years schedule
             
             break;
@@ -772,9 +740,9 @@ void Gridmaster::menuserver(void)
             break;
         }
     }  
-else
-            //-------------------------------------------------------------------------------------------
-        {
+else 
+    if (replaceMenuflag)
+         {
             //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
             //  ⁡⁣⁣⁢Appears and disappears with mainMenuflag boolean⁡
 
@@ -782,7 +750,8 @@ else
             int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,1800},50);
             if(choice==1)
             {
-                    mainMenuflag=false;
+                    mainMenuflag=true;  //turn main menu back on
+                    replaceMenuflag=false; //finished with replacemenu..turn it off
                     std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
                     std::cout<<"Saving the current calendar as "<<filename<<std::endl;
                     Gridmaster::SaveCalendarToFile(filename,dayGrid);
@@ -793,7 +762,8 @@ else
             }
             if(choice==2)
             {
-                    mainMenuflag=false;
+                    mainMenuflag=true;  //turn main menu back on
+                    replaceMenuflag=false; //finished with replacemenu..turn it off
                     std::cout<<"exiting without change..."<<std::endl;
 
             }
@@ -801,8 +771,53 @@ else
 
         }
 
+        if(loadMenuflag)
+        {
+            std::string temp=chooseLoadFile();
+            if (temp !="NONE")
+                std::cout<<temp<<std::endl;
+            
+        }
+
 
 
 
 }
+//**************************************************************************************** */
+std::string Gridmaster::chooseLoadFile(void)    //create a menu populated with files in directory and return the string of selected filename
+{
+    std::string tempfile;
+    std::vector<std::string> files;
+    
 
+    std::string path = "./SavedCalendars"; // Change this to your directory
+    int index=0;
+    int choice=0;
+
+    for (const auto& entry : fs::directory_iterator(path)) 
+    {
+        if (entry.is_regular_file()) 
+        {
+            
+            files.emplace_back(entry.path().filename().string());
+        }
+    
+    }
+    loadMenuflag=true;
+    mainMenuflag=false;
+
+    choice=userMenu.displayMenu(files,{3150,1600},50);
+
+    if(choice>0)    //if display returns a menu choice then end the submenu
+    {
+        mainMenuflag=true;
+        loadMenuflag=false;
+        
+        return(files[choice-1]); //correct for the fact that the choice starts at item 1
+
+    }
+    
+
+
+    return "NONE";  //no choice made
+}
