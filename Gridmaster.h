@@ -54,6 +54,8 @@ class Gridmaster
     float reducedTimeDays=51.0;
     float initialVacation=totalVacation;
 
+    std::string activeFileName="";
+
     bool mainMenuflag=true; //file menu choice display flag -starts in on position.  False is off/ True is displayed
     bool replaceMenuflag=false; //file exists menu
     bool loadMenuflag=false; //choosing which file to load

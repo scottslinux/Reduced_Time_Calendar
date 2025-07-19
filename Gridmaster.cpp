@@ -289,7 +289,8 @@ void Gridmaster::Scoreboard(void)
 
     
     
-    //-----------------------------------------------------------------------------------------------
+    //--------------------------------------
+    //load graph bar graphic
     if (loadgraphflag)
     {
         DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
@@ -301,14 +302,13 @@ void Gridmaster::Scoreboard(void)
             DrawTextEx(marker,"LOADING CALENDAR",Vector2{Hinterval*4+150,2000},
                 60,0,Color{39,75,43,255});
 
-            std::cout<<"Graphtimer: "<<graphtimer<<std::endl;
 
 
         }
                 else
                 {
                     loadgraphflag=false;
-                    Gridmaster::loadCalendarfromFile("Reduced_time_2026.txt");
+                    Gridmaster::loadCalendarfromFile("Reduced_time_2026.txt");  //actually perform the load
                 }
 
 
@@ -775,7 +775,16 @@ else
         {
             std::string temp=chooseLoadFile();
             if (temp !="NONE")
+            {
+                //at this point a choice of a file has been made
+                activeFileName=temp;
+                loadgraphflag=true;     //start the graphic running
+                graphtimer=10.0;
+
                 std::cout<<temp<<std::endl;
+
+
+            }
             
         }
 
@@ -812,8 +821,11 @@ std::string Gridmaster::chooseLoadFile(void)    //create a menu populated with f
     {
         mainMenuflag=true;
         loadMenuflag=false;
+        std::string selected=path+"/"+files[choice-1];  //formats to "./SavedCalendars/filename.txt"
+
+        std::cout<<"Loading "<<selected<<std::endl;
         
-        return(files[choice-1]); //correct for the fact that the choice starts at item 1
+        return(selected); //return the filename to load formatted with path.
 
     }
     
