@@ -19,13 +19,18 @@ int main()
 
     Gridmaster mainGrid;  //must be called after the window is initialized..Rookie error
     Calendar* CurrYear;
+    int result=2026;
 
+    
+while (result!=999)     //terminate signal
+{
     CurrYear=new Calendar();
-    CurrYear->loadCalendar(2026,0); //create a year
+    CurrYear->loadCalendar(result,0); //create a year
 
     //now pass the year to gridmaster just for a function to merge the squares with cal data
     //I dont think it needs to persist
     mainGrid.MergeGridwithCalendar(CurrYear);
+    
     
 
 
@@ -35,7 +40,14 @@ int main()
         BeginDrawing();
 
 
-        mainGrid.DrawGrid();
+        result=mainGrid.DrawGrid();    //compare activeyear to desiredyear
+                                //if different then exit and start again
+                                //with new year
+        if(result!=0)           //a new year get out
+            {   
+                std::cout<<"BACK IN MAIN!!! "<<result<<std::endl;
+                break;
+            }
         mainGrid.MouseTrap();
         
 
@@ -49,7 +61,7 @@ int main()
     delete CurrYear;
     CurrYear = nullptr;
     
-
+}
     
     CloseAudioDevice();
     return 0;

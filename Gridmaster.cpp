@@ -66,7 +66,7 @@ Gridmaster::~Gridmaster()   //destructor Called Automatically by C++
 
 
 //      ⁡⁣⁢⁣Create the big screen Grid⁡
-void Gridmaster::DrawGrid()
+int Gridmaster::DrawGrid()
 {
     ClearBackground(RAYWHITE);
     //Large Outline
@@ -98,11 +98,21 @@ void Gridmaster::DrawGrid()
     for(int mnth=1;mnth<=12;mnth++)
         DrawdayGrid(mnth);  //call to draw all day rectangles
 
-    Scoreboard();
+    Scoreboard();  // main drawing routine and menu link
+
+    //   ⁡⁣⁢⁣A new year has been chosen...fall out to ReducedTime.cpp to start again⁡
+    //   ⁡⁣⁢⁣with the new year.⁡
+
+    if(desiredyear!=activeYear)
+    {
+        return(desiredyear);
+
+
+    }
 
 
      
-    return;
+    return 0;
 
 }
 //*******************************************************/
@@ -223,7 +233,7 @@ void Gridmaster::Scoreboard(void)
     DrawCircle(Hinterval*4+Hinterval/2,1350,108,WHITE);
     DrawCircle(Hinterval*4+Hinterval/2,1350,100,paletteColor[colorindex]);
 
-    std::string titleyear=std::to_string(dayGrid[20].year); //the 20th element will definitely be a real day and not blank
+    std::string titleyear=std::to_string(activeYear); // the year currently being operated on
     Vector2 stringsizeyear=MeasureTextEx(monthfont,titleyear.c_str(),120,0);
     
     DrawTextEx(monthfont,titleyear.c_str(),Vector2{Hinterval*4+Hinterval/2-stringsizeyear.x/2,0},120,0,BLACK);
@@ -289,33 +299,7 @@ void Gridmaster::Scoreboard(void)
 
     
     
-    //--------------------------------------
-    //load graph bar graphic
-    if (loadgraphflag)
-    {
-        DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
-        graphtimer+=GetFrameTime()*300;
-
-        if(graphtimer<600)
-        {
-            DrawRectangle(Hinterval*4+50,2100,600-(600-graphtimer),15,RED);
-            DrawTextEx(marker,"LOADING CALENDAR",Vector2{Hinterval*4+150,2000},
-                60,0,Color{39,75,43,255});
-
-
-
-        }
-                else
-                {
-                    loadgraphflag=false;
-                    Gridmaster::loadCalendarfromFile(activeFileName);  //actually perform the load
-                    
-                }
-
-
-
-    }
-
+    
     
     return;
 }
@@ -409,7 +393,9 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
 void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year and Merge it
 {
     
-
+    //  ⁡⁣⁢⁣𝗦𝗲𝘁 𝗯𝗼𝘁𝗵 𝗮𝗰𝘁𝗶𝘃𝗲𝗬𝗲𝗮𝗿 𝗮𝗻𝗱 𝗱𝗲𝘀𝗶𝗿𝗲𝗱𝗬𝗲𝗮𝗿 𝗲𝗾𝘂𝗮𝗹 𝘁𝗼 𝗰𝘂𝗿𝗿𝗲𝗻𝘁 𝘆𝗲𝗮𝗿 𝘁𝗵𝗮𝘁 𝗶𝘀 𝗯𝗲𝗶𝗻𝗴 𝗺𝗲𝗿𝗴𝗲𝗱⁡
+    activeYear=cal->DAY[10].year;      // take 10th grid spot for January..pick the year up there
+    desiredyear=activeYear;
     
     std::cout<<"In the merge method within Gridmaster...pointer passed\n";
 
@@ -616,7 +602,7 @@ void Gridmaster::menuserver(void)
 
     if(mainMenuflag)   //display the main choices unless the dialogue box is up
     {
-        std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar"};
+        std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar","EXIT"};
 
         int selection=userMenu.displayMenu(options1,{3100,1800},60);
         
@@ -706,6 +692,9 @@ else
             {
                 createCalflag=false;
                 mainMenuflag=true;
+
+                desiredyear=yearchosen+2025;
+                std::cout<<"The year chosen is "<<desiredyear<<" out???"<<std::endl;
                 
             
 
@@ -714,6 +703,30 @@ else
 
 
         }
+    
+    //                              load graph bar graphic
+    if (loadgraphflag)
+    {
+        DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
+        graphtimer+=GetFrameTime()*300;
+
+        if(graphtimer<600)
+        {
+            DrawRectangle(Hinterval*4+50,2100,600-(600-graphtimer),15,RED);
+            DrawTextEx(marker,"LOADING CALENDAR",Vector2{Hinterval*4+150,2000},
+                60,0,Color{39,75,43,255});
+        }
+                else
+                {
+                    loadgraphflag=false;
+                    Gridmaster::loadCalendarfromFile(activeFileName);  //actually perform the load
+                    activeYear=dayGrid[20].year;
+                    desiredyear=activeYear;
+                }
+
+
+
+    }
 
 
 

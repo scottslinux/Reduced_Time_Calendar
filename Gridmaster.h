@@ -56,7 +56,7 @@ class Gridmaster
 
     std::string activeFileName="";
     int activeYear=2026;            //the default year for the calendar..functions to hold the year for the entire program
-                                    //changeable in create new calendar
+    int desiredyear=activeYear;     //changeable in create new calendar. Will reset both in merge
 
     bool mainMenuflag=true; //file menu choice display flag -starts in on position.  False is off/ True is displayed
     bool replaceMenuflag=false; //file exists menu
@@ -93,7 +93,7 @@ class Gridmaster
 
     Gridmaster();   //You need to declare all functions..even the ⁡⁢⁣⁣𝗰𝗼𝗻𝘀𝘁𝗿𝘂𝗰𝘁𝗼𝗿
     ~Gridmaster();
-    void DrawGrid();    //may enhance this definition later
+    int DrawGrid();    //return desired new year
     void DrawdayGrid(int month); //routine to draw monthly calander grid
     void Scoreboard(void); //tally the vacation days and display on the right
     void SenseMouse(Rectangle); //return the rectangle that the mouse hovered/clicked on
