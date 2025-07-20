@@ -21,7 +21,7 @@ int main()
     Calendar* CurrYear;
     int result=2026;
 
-    
+
 while (result!=999)     //terminate signal
 {
     CurrYear=new Calendar();
@@ -35,7 +35,7 @@ while (result!=999)     //terminate signal
 
 
 
-    while(!WindowShouldClose())
+    while(true) //stay in the loop until EXIT is chosen
     {
         BeginDrawing();
 
@@ -45,7 +45,7 @@ while (result!=999)     //terminate signal
                                 //with new year
         if(result!=0)           //a new year get out
             {   
-                std::cout<<"BACK IN MAIN!!! "<<result<<std::endl;
+                
                 break;
             }
         mainGrid.MouseTrap();
@@ -63,7 +63,7 @@ while (result!=999)     //terminate signal
     
 }
     
-    CloseAudioDevice();
+    
     return 0;
     
 } 

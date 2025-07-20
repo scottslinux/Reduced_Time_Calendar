@@ -397,7 +397,6 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
     activeYear=cal->DAY[10].year;      // take 10th grid spot for January..pick the year up there
     desiredyear=activeYear;
     
-    std::cout<<"In the merge method within Gridmaster...pointer passed\n";
 
     int monthindex=0; //start at first month
     int dayindex=0;
@@ -413,8 +412,8 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
 
         while( cal->DAY[dayindex].year !=0) //iterate a monthuntil hit divider
         {
-            std::cout<<cal->DAY[dayindex].month<<"/"<<cal->DAY[dayindex].day<<
-            "/"<< cal->DAY[dayindex].year<<"\t\t"<<dayindex<<std::endl;
+            //std::cout<<cal->DAY[dayindex].month<<"/"<<cal->DAY[dayindex].day<<
+            //"/"<< cal->DAY[dayindex].year<<"\t\t"<<dayindex<<std::endl;
 
             //set all of the values for the day in the grid to match the appropriate calendar values
             dayGrid[monthindex*42 + firstdayoffset + cal->DAY[dayindex].day].dayValue=cal->DAY[dayindex].day;
@@ -428,7 +427,7 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
 
             dayindex++;
         }
-        std::cout<<"**********  increment month  *********"<<std::endl;
+        //std::cout<<"**********  increment month  *********"<<std::endl;
         monthindex++;
         dayindex++;
     }
@@ -497,7 +496,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
             dayGrid[gridIndex].designation=colorindex+1;
             Gridmaster::adjustTotals(dayGrid[gridIndex].designation,0.25);
             dayGrid[gridIndex].value+=0.25;               //attribute full day on that date
-            std::cout<<"Value: "<<dayGrid[gridIndex].value<<std::endl;
+            //std::cout<<"Value: "<<dayGrid[gridIndex].value<<std::endl;
 
             return; //gotta get out of the routine after a choice is executed
         }
@@ -548,7 +547,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
 
 void Gridmaster::adjustTotals(int designation,float val) //1=FullTime 2=Reduced
 {
-    std::cout<<"entering adjusttotals: designation:"<<designation<<" Value:"<<val<<std::endl;
+    //std::cout<<"entering adjusttotals: designation:"<<designation<<" Value:"<<val<<std::endl;
 
     if(designation==1)  //adjustment to full time when passing negative one it adds a day that is being returned
         fullTimeDays-=val;
@@ -631,7 +630,14 @@ void Gridmaster::menuserver(void)
 
             }
             break;
-        
+        //------------------------------------------
+        case 4:                     //EXIT the program
+            {
+                desiredyear=999;    //signal to return to main and exit the program
+            }
+            break;
+        //------------------------------------------
+      
         default:
             break;
         }
@@ -694,7 +700,7 @@ else
                 mainMenuflag=true;
 
                 desiredyear=yearchosen+2025;
-                std::cout<<"The year chosen is "<<desiredyear<<" out???"<<std::endl;
+                //std::cout<<"The year chosen is "<<desiredyear<<" out???"<<std::endl;
                 
             
 
@@ -709,6 +715,7 @@ else
     {
         DrawRectangle(Hinterval*4+50,2100,600,15,WHITE);
         graphtimer+=GetFrameTime()*300;
+        mainMenuflag=false;
 
         if(graphtimer<600)
         {
@@ -719,6 +726,7 @@ else
                 else
                 {
                     loadgraphflag=false;
+                    mainMenuflag=true;
                     Gridmaster::loadCalendarfromFile(activeFileName);  //actually perform the load
                     activeYear=dayGrid[20].year;
                     desiredyear=activeYear;
