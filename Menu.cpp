@@ -159,7 +159,7 @@ int Menu::displayMenu(std::string wintitle,std::vector<std::string>& menuitem, V
     
 
     DrawRectangle(xy.x-(pad)-4,xy.y-rowheigt*2-12,menuwidth+pad*2+8,rowheigt*2+24,BLACK);
-    DrawRectangle(xy.x-(pad),xy.y-rowheigt*2-8,menuwidth+pad*2,rowheigt*2+16,Color{163,163,163,255});
+    DrawRectangle(xy.x-(pad),xy.y-rowheigt*2-8,menuwidth+pad*2+2,rowheigt*2+16,Color{163,163,163,255});
 
 
 

@@ -65,7 +65,7 @@ Gridmaster::~Gridmaster()   //destructor Called Automatically by C++
 //********************************************************
 
 
-//      ⁡⁣⁢⁣Create the screen Grid⁡
+//      ⁡⁣⁢⁣Create the big screen Grid⁡
 void Gridmaster::DrawGrid()
 {
     ClearBackground(RAYWHITE);
@@ -308,7 +308,8 @@ void Gridmaster::Scoreboard(void)
                 else
                 {
                     loadgraphflag=false;
-                    Gridmaster::loadCalendarfromFile("Reduced_time_2026.txt");  //actually perform the load
+                    Gridmaster::loadCalendarfromFile(activeFileName);  //actually perform the load
+                    
                 }
 
 
@@ -355,8 +356,6 @@ void Gridmaster::MouseTrap()
     currentsquare=Gridmaster::MouseCollision(mousepos); //get the current index for the square
 
     Gridmaster::mouseClickChoices(currentsquare, mousepos);
-
-    //Gridmaster::menuchecking(mousepos);   this was the old menu handling routine....before the class
 
     
 
@@ -409,7 +408,7 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
 
 void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year and Merge it
 {
-    //use example 2025 -created in the constructor
+    
 
     
     std::cout<<"In the merge method within Gridmaster...pointer passed\n";
@@ -577,47 +576,6 @@ void Gridmaster::adjustTotals(int designation,float val) //1=FullTime 2=Reduced
 }
 //****************************************************************************/
 
-void Gridmaster::menuchecking(Vector2 mousepos)
-{
-    //load the rectangels from the menu drawing area
-    std::vector<Rectangle>  menurects{
-    {Hinterval*4+10,1600,700,100},{Hinterval*4+10,1710,700,100},{Hinterval*4+10,1820,700,100}};
-
-    for(int i=0;i<3;i++)        //0: save   1: load    2: create new
-    {
-
-        if (CheckCollisionPointRec(mousepos,menurects[i]))
-        {
-            if(!mainMenuflag)   //if dialoguing do not display choice bars
-                DrawRectangleLinesEx(menurects[i],15,YELLOW);
-
-            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)&& i==0)
-            {
-                mainMenuflag=true;  //trigger the dialogue box
-                //this opens the dialogue for the save button
-               
-
-            }
-            if(IsMouseButtonPressed(MOUSE_BUTTON_LEFT)&& i==1)
-            {
-                loadgraphflag=true;
-                graphtimer=10.0;
-
-
-            }
-        }
-
-
-
-
-    }
-
-
-
-
-
-        return;
-}
 //******************************************************************************/
 //A little chat GPT help. Takes a filename string and a vector(dayGrid)
 void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vector<gridData>& calendar)
@@ -648,7 +606,166 @@ void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vect
 }
 
 //******************************************************************************/
-//Loads from a saved Calendar...need to scan day totals
+
+//******************************************************************************/
+//                           Menu Server
+
+void Gridmaster::menuserver(void)
+{
+
+
+    if(mainMenuflag)   //display the main choices unless the dialogue box is up
+    {
+        std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar"};
+
+        int selection=userMenu.displayMenu(options1,{3100,1800},60);
+        
+        switch (selection)  //int returned from the menu selection
+        {
+        case 1:                     //Save Case -->opens confirmation menu for (exists...save/cancel
+            mainMenuflag=false;
+            replaceMenuflag=true;
+            break;
+        //------------------------------------------
+        case 2:                     //load menu....will open choices of which file
+            {
+                //loadgraphflag=true;
+                mainMenuflag=false;
+                loadMenuflag=true;
+
+            }
+            break;
+        //------------------------------------------
+        case 3:                     //will eventually allow creation of new years schedule
+            {
+                mainMenuflag=false; //turn off main menu and bring up new year selection
+                createCalflag=true; //turn on selection menu
+                SetMousePosition(Hinterval*4.3,1600);   //move the mouse from the main menu buttons
+
+
+            }
+            break;
+        
+        default:
+            break;
+        }
+    }  
+else 
+    if (replaceMenuflag)
+         {
+            //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
+            //  ⁡⁣⁣⁢Appears and disappears with mainMenuflag boolean⁡
+
+            std::vector<std::string> menuitems{"Replace File","Cancel"};
+            int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,1800},50);
+            if(choice==1)
+            {
+                    mainMenuflag=true;  //turn main menu back on
+                    replaceMenuflag=false; //finished with replacemenu..turn it off
+                    std::string filename="./SavedCalendars/Reduced_time_"+(std::to_string(dayGrid[20].year))+".txt";
+                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
+                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
+
+                    std::cout<<"File Saved Successfully.....\n";
+
+       
+            }
+            if(choice==2)
+            {
+                    mainMenuflag=true;  //turn main menu back on
+                    replaceMenuflag=false; //finished with replacemenu..turn it off
+                    std::cout<<"exiting without change..."<<std::endl;
+
+            }
+
+
+        }
+
+        if(loadMenuflag)
+        {
+            std::string temp=chooseLoadFile();   //  ⁡⁣⁢⁣𝙘𝙝𝙤𝙤𝙨𝙚𝙇𝙤𝙖𝙙𝙁𝙞𝙡𝙚() 𝙘𝙖𝙡𝙡⁡
+            if (temp !="NONE")
+            {
+                //at this point a choice of a file has been made
+                activeFileName=temp;
+                loadgraphflag=true;     //start the graphic running
+                graphtimer=10.0;
+
+
+
+            }
+            
+        }
+        //  ⁡⁣⁢⁣Flag is active to signal create new calendar operation⁡
+        if (createCalflag)
+        {
+            std::vector<std::string> futureyrs={"2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"};
+            int yearchosen=userMenu.displayMenu("Select Year",futureyrs,Vector2{Hinterval*4.3,1600},42);
+
+            if(yearchosen !=0)  //user has chosen a year
+            {
+                createCalflag=false;
+                mainMenuflag=true;
+                
+            
+
+
+            }
+
+
+        }
+
+
+
+
+
+}
+//**************************************************************************************** */
+//              ‍⁡⁣⁢⁣𝗰𝗿𝗲𝗮𝘁𝗲 𝗮 𝗺𝗲𝗻𝘂 𝗽𝗼𝗽𝘂𝗹𝗮𝘁𝗲𝗱 𝘄𝗶𝘁𝗵 𝗳𝗶𝗹𝗲𝘀 𝗶𝗻 𝗱𝗶𝗿𝗲𝗰𝘁𝗼𝗿𝘆⁡
+
+std::string Gridmaster::chooseLoadFile(void)    //return the string of selected filename
+{
+    std::string tempfile;
+    std::vector<std::string> files;
+    
+
+    std::string path = "./SavedCalendars"; // Change this to your directory
+    int index=0;
+    int choice=0;
+
+    for (const auto& entry : fs::directory_iterator(path)) 
+    {
+        if (entry.is_regular_file()) 
+        {
+            
+            files.emplace_back(entry.path().filename().string());
+        }
+    
+    }
+    loadMenuflag=true;
+    mainMenuflag=false;
+
+    choice=userMenu.displayMenu(files,{3150,1600},50);
+
+    if(choice>0)    //if display returns a menu choice then end the submenu
+    {
+        mainMenuflag=true;
+        loadMenuflag=false;
+        std::string selected=path+"/"+files[choice-1];  //formats to "./SavedCalendars/filename.txt"
+
+        std::cout<<"Loading "<<selected<<std::endl;
+        
+        return(selected); //return the filename to load formatted with path.
+
+    }
+    
+
+
+    return "NONE";  //no choice made
+}
+//**************************************************************************************** */
+
+//          ‍⁡⁣⁢⁣Loads from a saved Calendar...need to scan day totals⁡
 
 int Gridmaster::loadCalendarfromFile(std::string filename)
 {
@@ -702,134 +819,4 @@ int Gridmaster::loadCalendarfromFile(std::string filename)
 
 return 1;
 
-}
-//******************************************************************************/
-//                           Menu Server
-
-void Gridmaster::menuserver(void)
-{
-
-
-    if(mainMenuflag)   //display the main choices unless the dialogue box is up
-    {
-        std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar"};
-
-        int selection=userMenu.displayMenu(options1,{3100,1800},60);
-        
-        switch (selection)  //int returned from the menu selection
-        {
-        case 1:                     //Save Case -->opens confirmation menu for (exists...save/cancel
-            mainMenuflag=false;
-            replaceMenuflag=true;
-            break;
-        //------------------------------------------
-        case 2:                     //load menu....will open choices of which file
-            {
-                //loadgraphflag=true;
-                mainMenuflag=false;
-                loadMenuflag=true;
-
-            }
-            break;
-        //------------------------------------------
-        case 3:                     //will eventually allow creation of new years schedule
-            
-            break;
-        
-        default:
-            break;
-        }
-    }  
-else 
-    if (replaceMenuflag)
-         {
-            //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
-            //  ⁡⁣⁣⁢Appears and disappears with mainMenuflag boolean⁡
-
-            std::vector<std::string> menuitems{"Replace File","Cancel"};
-            int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,1800},50);
-            if(choice==1)
-            {
-                    mainMenuflag=true;  //turn main menu back on
-                    replaceMenuflag=false; //finished with replacemenu..turn it off
-                    std::string filename="Reduced_time_"+std::to_string(2026)+".txt";
-                    std::cout<<"Saving the current calendar as "<<filename<<std::endl;
-                    Gridmaster::SaveCalendarToFile(filename,dayGrid);
-
-                    std::cout<<"File Saved Successfully.....\n";
-
-       
-            }
-            if(choice==2)
-            {
-                    mainMenuflag=true;  //turn main menu back on
-                    replaceMenuflag=false; //finished with replacemenu..turn it off
-                    std::cout<<"exiting without change..."<<std::endl;
-
-            }
-
-
-        }
-
-        if(loadMenuflag)
-        {
-            std::string temp=chooseLoadFile();
-            if (temp !="NONE")
-            {
-                //at this point a choice of a file has been made
-                activeFileName=temp;
-                loadgraphflag=true;     //start the graphic running
-                graphtimer=10.0;
-
-                std::cout<<temp<<std::endl;
-
-
-            }
-            
-        }
-
-
-
-
-}
-//**************************************************************************************** */
-std::string Gridmaster::chooseLoadFile(void)    //create a menu populated with files in directory and return the string of selected filename
-{
-    std::string tempfile;
-    std::vector<std::string> files;
-    
-
-    std::string path = "./SavedCalendars"; // Change this to your directory
-    int index=0;
-    int choice=0;
-
-    for (const auto& entry : fs::directory_iterator(path)) 
-    {
-        if (entry.is_regular_file()) 
-        {
-            
-            files.emplace_back(entry.path().filename().string());
-        }
-    
-    }
-    loadMenuflag=true;
-    mainMenuflag=false;
-
-    choice=userMenu.displayMenu(files,{3150,1600},50);
-
-    if(choice>0)    //if display returns a menu choice then end the submenu
-    {
-        mainMenuflag=true;
-        loadMenuflag=false;
-        std::string selected=path+"/"+files[choice-1];  //formats to "./SavedCalendars/filename.txt"
-
-        std::cout<<"Loading "<<selected<<std::endl;
-        
-        return(selected); //return the filename to load formatted with path.
-
-    }
-    
-
-
-    return "NONE";  //no choice made
 }

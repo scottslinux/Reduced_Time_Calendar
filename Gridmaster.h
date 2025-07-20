@@ -55,11 +55,14 @@ class Gridmaster
     float initialVacation=totalVacation;
 
     std::string activeFileName="";
+    int activeYear=2026;            //the default year for the calendar..functions to hold the year for the entire program
+                                    //changeable in create new calendar
 
     bool mainMenuflag=true; //file menu choice display flag -starts in on position.  False is off/ True is displayed
     bool replaceMenuflag=false; //file exists menu
     bool loadMenuflag=false; //choosing which file to load
     bool loadgraphflag=false; //flag to keep loading graph alive
+    bool createCalflag=false;
 
     float graphtimer=0;
     
