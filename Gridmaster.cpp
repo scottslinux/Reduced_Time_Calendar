@@ -593,7 +593,7 @@ void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vect
 //******************************************************************************/
 
 //******************************************************************************/
-//                           Menu Server
+//                           ​‌‌‌‍⁡⁣⁢⁣‍𝕄𝕖𝕟𝕦 𝕊𝕖𝕣𝕧𝕖𝕣⁡​
 
 void Gridmaster::menuserver(void)
 {
@@ -697,7 +697,7 @@ else
             if(yearchosen !=0)  //user has chosen a year
             {
                 createCalflag=false;
-                mainMenuflag=true;
+                Gridmaster::menuDelay();
 
                 desiredyear=yearchosen+2025;
                 //std::cout<<"The year chosen is "<<desiredyear<<" out???"<<std::endl;
@@ -736,6 +736,8 @@ else
 
     }
 
+        if (menuTimerFlag)  //slowly phase in main menu to prevent extra click sensing
+            menuDelay();
 
 
 
@@ -756,10 +758,10 @@ std::string Gridmaster::chooseLoadFile(void)    //return the string of selected 
 
     for (const auto& entry : fs::directory_iterator(path)) 
     {
-        if (entry.is_regular_file()) 
+        if (entry.is_regular_file()) //only include valid files
         {
-            
-            files.emplace_back(entry.path().filename().string());
+            if(entry.path().filename().string().find("txt")!=std::string::npos)
+                    files.emplace_back(entry.path().filename().string());
         }
     
     }
@@ -841,3 +843,43 @@ int Gridmaster::loadCalendarfromFile(std::string filename)
 return 1;
 
 }
+//********************************************************************** */
+void Gridmaster::menuDelay(void)
+{
+    menuTimerFlag=true; //  assure revisits out of menu server
+    IsMouseButtonPressed(MOUSE_LEFT_BUTTON); //flush mouse
+    menutimer+=GetFrameTime();
+    if(menutimer>1.0)
+    {
+        mainMenuflag=true;
+        menuTimerFlag=false;
+        menutimer=0;        //reset timer and flag. Start main menu again
+    }
+
+
+    return;
+
+}
+
+//*************************************************************** */
+
+//              Re-intialize dayGrid using placeholder
+void Gridmaster::reInitializeGrid()
+{
+    gridData placeholder;       //create a temp gridData item and use it to fill in default values
+    placeholder.activeBox=false;
+    placeholder.blackout=false;
+    placeholder.dayRect=Rectangle{0,0,0,0};
+    placeholder.dayValue=0;
+    placeholder.dayofweek=0;
+    placeholder.month=0;
+    placeholder.year=0;
+    placeholder.designation=0;
+    placeholder.value=0;
+
+    //⁡⁣⁢⁣​‌‍‌ℂℝ𝔼𝔸𝕋𝔼 𝕋ℍ𝔼 𝔻𝔸𝕐𝔾ℝ𝕀𝔻 𝕍𝔼ℂ𝕋𝕆ℝ 𝕀ℕ𝕀𝕋𝕀𝔸𝕃𝕀ℤ𝔼𝔻 𝕎𝕀𝕋ℍ 𝔻𝔼𝔽𝔸𝕌𝕃𝕋​⁡
+    dayGrid.clear();
+    dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
+
+return;
+}  

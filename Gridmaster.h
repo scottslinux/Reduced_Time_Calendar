@@ -14,7 +14,7 @@
 struct gridData
 {
     Rectangle dayRect;  // coordinates of rectangle for each box
-    bool activeBox;     // is the grid box a blank(false)
+    bool activeBox;     // Registered Vacation Day with Valley ?
     bool blackout;      //is this a blackout date?
     int dayValue;       // day of month should be day
     int dayofweek;
@@ -65,6 +65,8 @@ class Gridmaster
     bool createCalflag=false;
 
     float graphtimer=0;
+    float menutimer=0;
+    bool menuTimerFlag=false;
     
     
     int colorindex=0;  //keep track of current circle color
@@ -108,5 +110,8 @@ class Gridmaster
     int loadCalendarfromFile(std::string filename); //most important..overwrite existing calendar with saved
     void menuserver(void); //all menu functions in one convenient sexy place
     std::string chooseLoadFile(void); //create a menu with the files/filtered in the directory
+    void menuDelay(void); //  activates the main menu after a brief delay
+    void reInitializeGrid(void);  //clear out the grid when creating a new year
+
 };
 

@@ -29,6 +29,8 @@ while (result!=999)     //terminate signal
 
     //now pass the year to gridmaster just for a function to merge the squares with cal data
     //I dont think it needs to persist
+
+    mainGrid.reInitializeGrid();
     mainGrid.MergeGridwithCalendar(CurrYear);
     
     
