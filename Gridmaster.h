@@ -45,13 +45,15 @@ class Gridmaster
     static Font monthfont;  //staying with a static just because
     static Font dayfont;
     static Font marker;
+    static Font dot;
 
-    float fulltimeallotment=45.0;
-    float reducedtimeallotment=46.0;
+    float fulltimeallotment=50.0;
+    float reducedtimeallotment=0.0;
 
-    float totalVacation=91.0;
-    float fullTimeDays=40.0;
-    float reducedTimeDays=51.0;
+    float ftePercentage=1.0;    //default to 100%
+    float totalVacation=50.0;   //default values
+    float fullTimeDays=50.0;
+    float reducedTimeDays=0;
     float initialVacation=totalVacation;
 
     std::string activeFileName="";
@@ -63,6 +65,7 @@ class Gridmaster
     bool loadMenuflag=false; //choosing which file to load
     bool loadgraphflag=false; //flag to keep loading graph alive
     bool createCalflag=false;
+    bool FTEflag=false;
 
     float graphtimer=0;
     float menutimer=0;
@@ -110,8 +113,10 @@ class Gridmaster
     int loadCalendarfromFile(std::string filename); //most important..overwrite existing calendar with saved
     void menuserver(void); //all menu functions in one convenient sexy place
     std::string chooseLoadFile(void); //create a menu with the files/filtered in the directory
-    void menuDelay(void); //  activates the main menu after a brief delay
+    void menuDelay(); //  activates the main menu after a brief delay
     void reInitializeGrid(void);  //clear out the grid when creating a new year
+    void SetPercentFTE(void);  //after adjusting FTE days, retally the allotment according to cal data
+    void dashBoard(void);  //small graphic to show FTE percent and allotments
 
 };
 

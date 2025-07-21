@@ -2,6 +2,8 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <algorithm>
+#include <string>
 #include "raylib.h"
 #include "Calendar.h"
 #include "Menu.h"
@@ -12,6 +14,7 @@ namespace fs = std::filesystem;
 Font Gridmaster::monthfont;
 Font Gridmaster::dayfont;
 Font Gridmaster::marker;
+Font Gridmaster::dot;
 
 //********************************************************
 //  ⁡⁣⁢⁣Constructor⁡
@@ -22,6 +25,7 @@ Gridmaster::Gridmaster()
     Gridmaster::monthfont=LoadFontEx("./resources/calfont.ttf",80,NULL,0);
     Gridmaster::dayfont=LoadFontEx("./resources/days.ttf",100,NULL,0);
     Gridmaster::marker=LoadFont("./resources/mono.ttf");
+    Gridmaster::dot=LoadFontEx("./resources/digital-7.ttf",50,0,0);
 
   
     monWidth=GetScreenWidth();    //initialize to monitor size and calculate everything else
@@ -291,6 +295,7 @@ void Gridmaster::Scoreboard(void)
     Color buttoncolor=Color{241,198,71,255};
     Color buttonshadow=Color{148,120,44,255};
 
+    dashBoard();
 
 
 
@@ -571,12 +576,13 @@ void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vect
     std::cerr << "Failed to open file for writing!\n";
     return;
 }
-
+    //output the header with data
+    outFile<<ftePercentage<<" "<<fulltimeallotment<<" "<<reducedtimeallotment<<"\n";
 
     for (const auto& day : calendar)
     {
         outFile<<day.activeBox<<" "<<day.blackout<<" "<<day.dayofweek<<" "<<day.dayRect.x<<" "
-            <<day.dayRect.y<<" "<<day.dayRect.height<<" "" "<<day.dayRect.width<<" "<<day.dayValue
+            <<day.dayRect.y<<" "<<day.dayRect.height<<" "<<day.dayRect.width<<" "<<day.dayValue
             <<" "<<day.designation<<" "<<day.month<<" "<<day.value<<" "<<day.year<<"\n";
 
 
@@ -599,24 +605,32 @@ void Gridmaster::menuserver(void)
 {
 
 
+if (!menuTimerFlag)
+{
+
     if(mainMenuflag)   //display the main choices unless the dialogue box is up
     {
-        std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar","EXIT"};
+        std::vector<std::string> options1={"Save Current Calendar","Load Existing Calendar ","Create New Calendar","Set % FTE","EXIT"};
 
         int selection=userMenu.displayMenu(options1,{3100,1800},60);
         
         switch (selection)  //int returned from the menu selection
         {
         case 1:                     //Save Case -->opens confirmation menu for (exists...save/cancel
-            mainMenuflag=false;
+            {
             replaceMenuflag=true;
+            mainMenuflag=false;
+            menuDelay();
+
+            }
             break;
         //------------------------------------------
         case 2:                     //load menu....will open choices of which file
             {
-                //loadgraphflag=true;
-                mainMenuflag=false;
                 loadMenuflag=true;
+                mainMenuflag=false;
+                menuDelay();
+                
 
             }
             break;
@@ -625,13 +639,25 @@ void Gridmaster::menuserver(void)
             {
                 mainMenuflag=false; //turn off main menu and bring up new year selection
                 createCalflag=true; //turn on selection menu
-                SetMousePosition(Hinterval*4.3,1600);   //move the mouse from the main menu buttons
+                menuDelay();
+                //SetMousePosition(Hinterval*4.3,1600);   //move the mouse from the main menu buttons
 
 
             }
             break;
         //------------------------------------------
         case 4:                     //EXIT the program
+            {
+                mainMenuflag=false;
+                FTEflag=true;    //signal to return to main and exit completely
+                SetMousePosition(Hinterval*4.3,1600);   //move the mouse from the main menu buttons
+
+
+                
+            }
+            break;
+        //------------------------------------------
+        case 5:                     //EXIT the program
             {
                 desiredyear=999;    //signal to return to main and exit the program
             }
@@ -642,7 +668,9 @@ void Gridmaster::menuserver(void)
             break;
         }
     }  
-else 
+}
+if(!menuTimerFlag)
+{
     if (replaceMenuflag)
          {
             //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
@@ -652,8 +680,11 @@ else
             int choice=userMenu.displayMenu("File Already Exists",menuitems,Vector2{Hinterval*4+50,1800},50);
             if(choice==1)
             {
-                    mainMenuflag=true;  //turn main menu back on
+                    //mainMenuflag=true;  //turn main menu back on
+                    menuDelay();
                     replaceMenuflag=false; //finished with replacemenu..turn it off
+                    mainMenuflag=true;
+
                     std::string filename="./SavedCalendars/Reduced_time_"+(std::to_string(dayGrid[20].year))+".txt";
                     std::cout<<"Saving the current calendar as "<<filename<<std::endl;
                     Gridmaster::SaveCalendarToFile(filename,dayGrid);
@@ -663,53 +694,58 @@ else
        
             }
             if(choice==2)
-            {
+            {       menuDelay();
                     mainMenuflag=true;  //turn main menu back on
                     replaceMenuflag=false; //finished with replacemenu..turn it off
                     std::cout<<"exiting without change..."<<std::endl;
+                    mainMenuflag=true;
 
             }
 
-
         }
-
-        if(loadMenuflag)
+}
+if (!menuTimerFlag)  //while the timer is running wait before new menu pops
+{
+    if(loadMenuflag)
+    {
+        std::string temp=chooseLoadFile();   //  ⁡⁣⁢⁣𝙘𝙝𝙤𝙤𝙨𝙚𝙇𝙤𝙖𝙙𝙁𝙞𝙡𝙚() 𝙘𝙖𝙡𝙡⁡
+        if (temp !="NONE")
         {
-            std::string temp=chooseLoadFile();   //  ⁡⁣⁢⁣𝙘𝙝𝙤𝙤𝙨𝙚𝙇𝙤𝙖𝙙𝙁𝙞𝙡𝙚() 𝙘𝙖𝙡𝙡⁡
-            if (temp !="NONE")
-            {
-                //at this point a choice of a file has been made
-                activeFileName=temp;
-                loadgraphflag=true;     //start the graphic running
-                graphtimer=10.0;
+            //at this point a choice of a file has been made
+            activeFileName=temp;
+            loadgraphflag=true;     //start the graphic running
+            graphtimer=10.0;
 
 
 
-            }
-            
         }
-        //  ⁡⁣⁢⁣Flag is active to signal create new calendar operation⁡
-        if (createCalflag)
+        
+    }
+}
+    //  ⁡⁣⁢⁣Flag is active to signal create new calendar operation⁡
+if (!menuTimerFlag)
+{
+    if (createCalflag)
+    {
+        std::vector<std::string> futureyrs={"2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"};
+        int yearchosen=userMenu.displayMenu("Select Year",futureyrs,Vector2{Hinterval*4.3,1600},42);
+
+        if(yearchosen !=0)  //user has chosen a year
         {
-            std::vector<std::string> futureyrs={"2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"};
-            int yearchosen=userMenu.displayMenu("Select Year",futureyrs,Vector2{Hinterval*4.3,1600},42);
+            createCalflag=false;
+            Gridmaster::menuDelay();
 
-            if(yearchosen !=0)  //user has chosen a year
-            {
-                createCalflag=false;
-                Gridmaster::menuDelay();
+            desiredyear=yearchosen+2025;
+            menuDelay();
+            mainMenuflag=true;
 
-                desiredyear=yearchosen+2025;
-                //std::cout<<"The year chosen is "<<desiredyear<<" out???"<<std::endl;
-                
             
 
-
-            }
-
-
         }
-    
+
+
+    }
+}  
     //                              load graph bar graphic
     if (loadgraphflag)
     {
@@ -736,10 +772,65 @@ else
 
     }
 
-        if (menuTimerFlag)  //slowly phase in main menu to prevent extra click sensing
+    if (menuTimerFlag)  //slowly phase in main menu to prevent extra click sensing
             menuDelay();
 
+    
+    if (FTEflag)    //in the FTE selection menu
+    {   
+        
+        std::vector<std::string> choices={"100","90","80","70","60","50"};
+        int percent=userMenu.displayMenu("% FTE",choices,Vector2{Hinterval*4+200,1650},50);
+        
 
+
+        if (percent !=0)    //percentage has been chosen
+        {
+            /*   100% fte awarded 50 days PTO. Approx workdays in the year is 261 minus
+                 Holidays is 250. Which means that 100% fte works 250-50days = 200 days
+                 per year.  Every 10% reduction is 20 days less than 200*/
+            percent--;
+
+        
+            
+            fullTimeDays=50;    //5 weeks of standard vacation
+            reducedTimeDays= (200*((percent*.10)));
+            ftePercentage= std::stof(choices[percent].c_str())/100;
+
+
+
+
+
+            std::cout<<"fulltime: "<<fullTimeDays<<std::endl;
+            std::cout<<"reduced: "<<reducedTimeDays<<std::endl;
+            std::cout<<"total: "<<totalVacation<<std::endl;
+           
+
+
+            totalVacation=fullTimeDays+reducedTimeDays;
+
+            Gridmaster::SetPercentFTE();
+
+            std::cout<<"******after adjustment*********\n";
+            std::cout<<"fulltime: "<<fullTimeDays<<std::endl;
+            std::cout<<"reduced: "<<reducedTimeDays<<std::endl;
+            std::cout<<"total: "<<totalVacation<<std::endl;
+            std::cout<<"Percentage fte: "<<ftePercentage<<std::endl;
+
+            FTEflag=false;  //turn off FTE submenu
+
+            menuDelay();
+
+            
+            
+
+
+
+        }
+
+    }
+
+    
 
 
 }
@@ -765,9 +856,13 @@ std::string Gridmaster::chooseLoadFile(void)    //return the string of selected 
         }
     
     }
+
+   
+
     loadMenuflag=true;
     mainMenuflag=false;
 
+    std::sort(files.begin(),files.end());  //sort the files
     choice=userMenu.displayMenu(files,{3150,1600},50);
 
     if(choice>0)    //if display returns a menu choice then end the submenu
@@ -801,6 +896,11 @@ int Gridmaster::loadCalendarfromFile(std::string filename)
         std::cout<<"*** Unable to open "<<filename<<std::endl;
         return 0;
     }
+    //Bring in the header
+    inputfile>>ftePercentage;
+    inputfile>>fulltimeallotment;
+    inputfile>>reducedtimeallotment;
+
     for(auto& day: dayGrid)
     {
         inputfile>>day.activeBox;
@@ -826,6 +926,7 @@ int Gridmaster::loadCalendarfromFile(std::string filename)
     //reset the days before calculating how they were reduced
     fullTimeDays=fulltimeallotment;
     reducedTimeDays=reducedtimeallotment;
+    totalVacation=fulltimeallotment+reducedtimeallotment;
 
     for( auto& day: dayGrid)
     {
@@ -844,16 +945,18 @@ return 1;
 
 }
 //********************************************************************** */
-void Gridmaster::menuDelay(void)
+void Gridmaster::menuDelay() //pass the flag to wait on
 {
     menuTimerFlag=true; //  assure revisits out of menu server
     IsMouseButtonPressed(MOUSE_LEFT_BUTTON); //flush mouse
     menutimer+=GetFrameTime();
     if(menutimer>1.0)
     {
-        mainMenuflag=true;
+        
         menuTimerFlag=false;
         menutimer=0;        //reset timer and flag. Start main menu again
+
+        
     }
 
 
@@ -878,8 +981,55 @@ void Gridmaster::reInitializeGrid()
     placeholder.value=0;
 
     //⁡⁣⁢⁣​‌‍‌ℂℝ𝔼𝔸𝕋𝔼 𝕋ℍ𝔼 𝔻𝔸𝕐𝔾ℝ𝕀𝔻 𝕍𝔼ℂ𝕋𝕆ℝ 𝕀ℕ𝕀𝕋𝕀𝔸𝕃𝕀ℤ𝔼𝔻 𝕎𝕀𝕋ℍ 𝔻𝔼𝔽𝔸𝕌𝕃𝕋​⁡
-    dayGrid.clear();
+    dayGrid.clear();    //had to delete the items in the vector and rebuild
     dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
 
 return;
 }  
+//***************************************************************** */
+void Gridmaster::SetPercentFTE(void)
+// Retally the days according to the current calendar allotment.
+{
+    //prior to adjustment set allotments
+    fulltimeallotment=fullTimeDays;
+    reducedtimeallotment=reducedTimeDays;
+    initialVacation=fulltimeallotment+reducedtimeallotment;
+    
+
+    for( auto& day: dayGrid)
+    {
+        if(day.designation==1)
+            fullTimeDays-=day.value;
+        if(day.designation==2)
+            reducedTimeDays-=day.value;
+
+
+    }
+    totalVacation=fullTimeDays+reducedTimeDays;
+
+    return;
+}
+//******************************************************************* */
+//          Dashboard Graphic Display Allotments
+void Gridmaster::dashBoard(void)
+{
+  //  Hinterval*4+Hinterval/2,1350,100
+  initialVacation=fulltimeallotment+reducedtimeallotment;
+  Vector2 textpos{Hinterval*4+45,1470};
+    DrawRectangle(Hinterval*4+3,1465,Hinterval-8,90,Color{0,0,20,30});
+
+    char buffer[100];  // adjust size as needed
+    snprintf(buffer, sizeof(buffer), "         percent FTE: %.0f%%  PTO days: %.2f\nfulltime days: %.2f  reduced time: %.2f", 
+         ftePercentage*100,initialVacation,fulltimeallotment,reducedtimeallotment);
+
+    std::string message = buffer;
+
+    DrawTextEx(dot,buffer,textpos,40,0,BLACK);
+
+
+
+
+
+
+
+}
