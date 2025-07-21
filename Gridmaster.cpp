@@ -723,7 +723,7 @@ if (!menuTimerFlag)  //while the timer is running wait before new menu pops
     }
 }
     //  ⁡⁣⁢⁣Flag is active to signal create new calendar operation⁡
-if (!menuTimerFlag)
+if (!menuTimerFlag) //while the timer is running wait before new menu pops
 {
     if (createCalflag)
     {
@@ -820,6 +820,7 @@ if (!menuTimerFlag)
             FTEflag=false;  //turn off FTE submenu
 
             menuDelay();
+            mainMenuflag=true;
 
             
             
@@ -950,7 +951,7 @@ void Gridmaster::menuDelay() //pass the flag to wait on
     menuTimerFlag=true; //  assure revisits out of menu server
     IsMouseButtonPressed(MOUSE_LEFT_BUTTON); //flush mouse
     menutimer+=GetFrameTime();
-    if(menutimer>1.0)
+    if(menutimer>0.50)
     {
         
         menuTimerFlag=false;
