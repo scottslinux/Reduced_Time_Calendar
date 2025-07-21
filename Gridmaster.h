@@ -47,6 +47,12 @@ class Gridmaster
     static Font marker;
     static Font dot;
 
+    Texture2D buttonupon;
+    Texture2D buttonupoff;
+    Texture2D buttondownon;
+    Texture2D buttondownoff;
+    
+
     float fulltimeallotment=50.0;
     float reducedtimeallotment=0.0;
 

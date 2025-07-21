@@ -27,6 +27,12 @@ Gridmaster::Gridmaster()
     Gridmaster::marker=LoadFont("./resources/mono.ttf");
     Gridmaster::dot=LoadFontEx("./resources/digital-7.ttf",50,0,0);
 
+    Gridmaster::buttondownoff=LoadTexture("./resources/button_down_off.png");
+    Gridmaster::buttondownon=LoadTexture("./resources/button_down_on.png");
+    Gridmaster::buttonupoff=LoadTexture("./resources/button_add_off.png");
+    Gridmaster::buttonupon=LoadTexture("./resources/button_add_on.png");
+
+
   
     monWidth=GetScreenWidth();    //initialize to monitor size and calculate everything else
     monHeight=GetScreenHeight();
@@ -295,7 +301,13 @@ void Gridmaster::Scoreboard(void)
     Color buttoncolor=Color{241,198,71,255};
     Color buttonshadow=Color{148,120,44,255};
 
-    dashBoard();
+    DrawTextureEx(buttonupoff,{Hinterval*5-160,80},2,.1,WHITE);
+    DrawTextureEx(buttondownoff,{Hinterval*5-160,230},2,.1,WHITE);
+
+    DrawTextureEx(buttonupoff,{Hinterval*5-160,470},2,.1,WHITE);
+    DrawTextureEx(buttondownoff,{Hinterval*5-160,620},2,.1,WHITE);
+
+    dashBoard();    //draws the FTE DAY Tally dashboard
 
 
 
