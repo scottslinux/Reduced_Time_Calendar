@@ -31,6 +31,7 @@ Gridmaster::Gridmaster()
     Gridmaster::buttondownon=LoadTexture("./resources/button_down_on.png");
     Gridmaster::buttonupoff=LoadTexture("./resources/button_add_off.png");
     Gridmaster::buttonupon=LoadTexture("./resources/button_add_on.png");
+    Gridmaster::press_shadow=LoadTexture("./resources/press_shadow.png");
 
 
   
@@ -69,7 +70,13 @@ Gridmaster::~Gridmaster()   //destructor Called Automatically by C++
     //delete calendarYear;  // Clean up the dynamically allocated Calendar
     //calendarYear = nullptr; // Good practice to set to nullptr
 
+    std::cout<<"Unloading resources in Gridmaster....."<<std::endl;
+    
     userMenu.unloadresources();
+    UnloadTexture(buttondownoff);
+    UnloadTexture(buttondownon);
+    UnloadTexture(buttonupoff);
+    UnloadTexture(buttonupon);
 }
 
 //********************************************************
@@ -396,6 +403,8 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
         DrawRectangleRec(dayGrid[contactedSquare].dayRect,Color{0,20,200,50});
         
 
+    std::cout<<"Mouse x: "<<GetMousePosition().x<<"  y: "<<GetMousePosition().y<<std::endl;
+
     return contactedSquare;
 
 
@@ -487,7 +496,15 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
         return;
     }
     
+    // buttons--- should move to its own method
+    if(CheckCollisionPointCircle(mousepos,{3774,167},50)&&IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    {   
+        DrawTextureEx(buttonupon,{Hinterval*5-160,80},2,.1,WHITE);
+        DrawTextureEx(press_shadow,{Hinterval*5-160,80},2,.1,WHITE);
 
+    }
+    if(CheckCollisionPointCircle(mousepos,{3774,319},50))
+        DrawTextureEx(buttondownon,{Hinterval*5-160,230},2,.1,WHITE);
  
 
 

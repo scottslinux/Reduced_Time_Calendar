@@ -51,7 +51,8 @@ class Gridmaster
     Texture2D buttonupoff;
     Texture2D buttondownon;
     Texture2D buttondownoff;
-    
+    Texture2D press_shadow;
+
 
     float fulltimeallotment=50.0;
     float reducedtimeallotment=0.0;
