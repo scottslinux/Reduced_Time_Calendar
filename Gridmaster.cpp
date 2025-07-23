@@ -15,6 +15,7 @@ Font Gridmaster::monthfont;
 Font Gridmaster::dayfont;
 Font Gridmaster::marker;
 Font Gridmaster::dot;
+Sound Gridmaster::click;
 
 //********************************************************
 //  ⁡⁣⁢⁣Constructor⁡
@@ -26,6 +27,8 @@ Gridmaster::Gridmaster()
     Gridmaster::dayfont=LoadFontEx("./resources/days.ttf",100,NULL,0);
     Gridmaster::marker=LoadFont("./resources/mono.ttf");
     Gridmaster::dot=LoadFontEx("./resources/digital-7.ttf",50,0,0);
+
+    Gridmaster::click=LoadSound("./resources/softclick.wav");
 
     Gridmaster::buttondownoff=LoadTexture("./resources/button_down_off.png");
     Gridmaster::buttondownon=LoadTexture("./resources/button_down_on.png");
@@ -54,7 +57,7 @@ Gridmaster::Gridmaster()
     placeholder.designation=0;
     placeholder.value=0;
 
-    //⁡⁣⁢⁣​‌‍‌ℂℝ𝔼𝔸𝕋𝔼 𝕋ℍ𝔼 𝔻𝔸𝕐𝔾ℝ𝕀𝔻 𝕍𝔼ℂ𝕋𝕆ℝ 𝕀ℕ𝕀𝕋𝕀𝔸𝕃𝕀ℤ𝔼𝔻 𝕎𝕀𝕋ℍ 𝔻𝔼𝔽𝔸𝕌𝕃𝕋​⁡
+    //⁡⁣⁢⁣‍ℂℝ𝔼𝔸𝕋𝔼 𝕋ℍ𝔼 𝔻𝔸𝕐𝔾ℝ𝕀𝔻 𝕍𝔼ℂ𝕋𝕆ℝ 𝕀ℕ𝕀𝕋𝕀𝔸𝕃𝕀ℤ𝔼𝔻 𝕎𝕀𝕋ℍ 𝔻𝔼𝔽𝔸𝕌𝕃𝕋⁡
     dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
 
     
@@ -70,8 +73,8 @@ Gridmaster::~Gridmaster()   //destructor Called Automatically by C++
     //delete calendarYear;  // Clean up the dynamically allocated Calendar
     //calendarYear = nullptr; // Good practice to set to nullptr
 
-    std::cout<<"Unloading resources in Gridmaster....."<<std::endl;
-    
+    std::cout<<"Unloading resources in Gridmaster Destructor....."<<std::endl;
+
     userMenu.unloadresources();
     UnloadTexture(buttondownoff);
     UnloadTexture(buttondownon);
@@ -179,13 +182,13 @@ void Gridmaster::DrawdayGrid(int month)
 
         
 
-        Rectangle currday={x,y,cellWidth,cellHeight};  //​‌‍‌⁡⁣⁢⁣𝘁𝗵𝗶𝘀 𝗶𝘀 𝘄𝗵𝗲𝗿𝗲 𝘄𝗲 𝘀𝘁𝗼𝗿𝗲 𝘁𝗵𝗲 𝗿𝗲𝗰𝘁 𝗶𝗻 𝘃𝗲𝗰𝘁𝗼𝗿⁡​
-        dayGrid[boxCounter].dayRect=currday;           //​‌‍‌⁡⁣⁢⁣𝗠𝗼𝗻𝗲𝘆!!!!⁡​
+        Rectangle currday={x,y,cellWidth,cellHeight};  //‍⁡⁣⁢⁣𝘁𝗵𝗶𝘀 𝗶𝘀 𝘄𝗵𝗲𝗿𝗲 𝘄𝗲 𝘀𝘁𝗼𝗿𝗲 𝘁𝗵𝗲 𝗿𝗲𝗰𝘁 𝗶𝗻 𝘃𝗲𝗰𝘁𝗼𝗿⁡
+        dayGrid[boxCounter].dayRect=currday;           //‍⁡⁣⁢⁣𝗠𝗼𝗻𝗲𝘆!!!!⁡
         
 
         DrawRectangleLinesEx(currday,1,BLACK);         //draw grid square outlines for each day
 
-        //⁡⁢⁣⁣​‌‍‌𝗖𝗼𝗹𝗼𝗿 𝗴𝗿𝗶𝗱 𝘀𝗾𝘂𝗮𝗿𝗲 𝗮𝗰𝗰𝗼𝗿𝗱𝗶𝗻𝗴 𝘁𝗼 𝘁𝗵𝗲 𝘁𝘆𝗽𝗲 𝗼𝗳 𝗣𝗧𝗢​⁡
+        //⁡⁢⁣⁣‍𝗖𝗼𝗹𝗼𝗿 𝗴𝗿𝗶𝗱 𝘀𝗾𝘂𝗮𝗿𝗲 𝗮𝗰𝗰𝗼𝗿𝗱𝗶𝗻𝗴 𝘁𝗼 𝘁𝗵𝗲 𝘁𝘆𝗽𝗲 𝗼𝗳 𝗣𝗧𝗢⁡
 
         if(dayGrid[boxCounter].designation==1) //full time PTO
         {
@@ -235,7 +238,7 @@ void Gridmaster::DrawdayGrid(int month)
     return;
 }
 //*************************************************************************/
-//          ⁡⁣⁢⁣​‌‌‍𝗦𝗰𝗼𝗿𝗲𝗯𝗼𝗮𝗿𝗱 𝗳𝗼𝗿 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝗮𝗻𝗱 𝗧𝗮𝗹𝗹𝘆 𝗼𝗳 𝗗𝗮𝘆𝘀​⁡
+//          ⁡⁣⁢⁣‍𝗦𝗰𝗼𝗿𝗲𝗯𝗼𝗮𝗿𝗱 𝗳𝗼𝗿 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝗮𝗻𝗱 𝗧𝗮𝗹𝗹𝘆 𝗼𝗳 𝗗𝗮𝘆𝘀⁡
 // ***Needs re-write
 
 
@@ -319,6 +322,9 @@ void Gridmaster::Scoreboard(void)
 
 
     menuserver();   //service the menus
+
+    eventTimer();   //service the event clock
+    
   
 
     
@@ -351,7 +357,7 @@ Vector2 Gridmaster::FindMonthxy(int month)
 
 }
 //*******************************************************/
-//            ⁡⁣⁢⁣​‌‌‍  𝕄𝕠𝕦𝕤𝕖 𝕋𝕣𝕒𝕡​⁡
+//            ⁡⁣⁢⁣‍  𝕄𝕠𝕦𝕤𝕖 𝕋𝕣𝕒𝕡⁡
 
 void Gridmaster::MouseTrap()
 {
@@ -370,7 +376,7 @@ void Gridmaster::MouseTrap()
 
 }
 //*******************************************************/
-//      ⁡⁣⁢⁣​‌‌‍ℂ𝕙𝕖𝕔𝕜 𝕄𝕠𝕦𝕤𝕖 ℙ𝕠𝕤𝕚𝕥𝕚𝕠𝕟 𝔸𝕘𝕒𝕚𝕟𝕤𝕥 𝕥𝕙𝕖 𝔾𝕣𝕚𝕕 𝕍𝕖𝕔𝕥𝕠𝕣​⁡
+//      ⁡⁣⁢⁣‍ℂ𝕙𝕖𝕔𝕜 𝕄𝕠𝕦𝕤𝕖 ℙ𝕠𝕤𝕚𝕥𝕚𝕠𝕟 𝔸𝕘𝕒𝕚𝕟𝕤𝕥 𝕥𝕙𝕖 𝔾𝕣𝕚𝕕 𝕍𝕖𝕔𝕥𝕠𝕣⁡
 //      Determine square/date the mouse is over
 
 int Gridmaster::MouseCollision(Vector2 mousepos)
@@ -413,7 +419,7 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
 }
 
 //*******************************************************/
-//      ⁡⁣⁢⁣​‌‌‍𝕄𝔼ℝ𝔾𝔼 𝔾ℝ𝕀𝔻 𝔸ℕ𝔻 ℂ𝔸𝕃𝔼ℕ𝔻𝔸ℝ​⁡
+//      ⁡⁣⁢⁣‍𝕄𝔼ℝ𝔾𝔼 𝔾ℝ𝕀𝔻 𝔸ℕ𝔻 ℂ𝔸𝕃𝔼ℕ𝔻𝔸ℝ⁡
 
 
 void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year and Merge it
@@ -464,7 +470,7 @@ void Gridmaster::MergeGridwithCalendar(Calendar* cal)  //Generate Desired Year a
 
 }    
 //***************************************************************************/
-//              ⁡⁣⁢⁣​‌‌‍𝗠𝗼𝘂𝘀𝗲 𝗖𝗹𝗶𝗰𝗸 𝗖𝗵𝗼𝗶𝗰𝗲𝘀​⁡
+//              ⁡⁣⁢⁣‍𝗠𝗼𝘂𝘀𝗲 𝗖𝗹𝗶𝗰𝗸 𝗖𝗵𝗼𝗶𝗰𝗲𝘀⁡
 
 void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
 {
@@ -496,16 +502,89 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
         return;
     }
     
-    // buttons--- should move to its own method
-    if(CheckCollisionPointCircle(mousepos,{3774,167},50)&&IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    //--------------------------------------------------
+    // ⁡⁣⁣⁢‍𝗨𝗣 𝗕𝗨𝗧𝗧𝗢𝗡⁡ FULL TIME
+    
+    if(CheckCollisionPointCircle(mousepos,{3774,167},50)&&IsMouseButtonDown(MOUSE_BUTTON_LEFT)
+            && !eventTimerFlag)
     {   
+        fullTimeDays+=0.25;     //add a quarter day
+        fulltimeallotment+=0.25;
+        if(!IsSoundPlaying(click))
+            PlaySound(click);
+        eventTimerFlag=true;
+        
+
+    }
+    if ((eventTimerFlag)&&(CheckCollisionPointCircle(mousepos,{3774,167},50)))
+    {
         DrawTextureEx(buttonupon,{Hinterval*5-160,80},2,.1,WHITE);
         DrawTextureEx(press_shadow,{Hinterval*5-160,80},2,.1,WHITE);
 
     }
-    if(CheckCollisionPointCircle(mousepos,{3774,319},50))
-        DrawTextureEx(buttondownon,{Hinterval*5-160,230},2,.1,WHITE);
+    //---------------------------------------------------------
+    //⁡⁣⁣⁢‍𝗗𝗢𝗪𝗡 𝗕𝗨𝗧𝗧𝗢𝗡⁡ FULL TIME
+    
  
+    if(CheckCollisionPointCircle(mousepos,{3774,319},50)&&IsMouseButtonDown(MOUSE_BUTTON_LEFT)
+            && !eventTimerFlag)
+    {   
+        fullTimeDays-=0.25;     //add a quarter day
+        fulltimeallotment-=0.25;
+        if(!IsSoundPlaying(click))
+            PlaySound(click);
+        eventTimerFlag=true;
+        
+
+    }
+    if ((eventTimerFlag)&&(CheckCollisionPointCircle(mousepos,{3774,319},50)))
+    {
+        DrawTextureEx(buttondownon,{Hinterval*5-160,230},2,.1,WHITE);
+        DrawTextureEx(press_shadow,{Hinterval*5-160,230},2,.1,WHITE);
+
+    }
+    //---------------------------------------------------------
+    //⁡⁣⁣⁢𝗨𝗣 𝗕𝗨𝗧𝗧𝗢𝗡 𝗥𝗘𝗗𝗨𝗖𝗘𝗗 𝗧𝗜𝗠𝗘⁡
+if(CheckCollisionPointCircle(mousepos,{3774,560},50)&&IsMouseButtonDown(MOUSE_BUTTON_LEFT)
+            && !eventTimerFlag)
+    {   
+        reducedTimeDays+=0.25;     //add a quarter day
+        reducedtimeallotment+=0.25;
+        if(!IsSoundPlaying(click))
+            PlaySound(click);
+        eventTimerFlag=true;
+        
+
+    }
+    if ((eventTimerFlag)&&(CheckCollisionPointCircle(mousepos,{3774,560},50)))
+    {
+        DrawTextureEx(buttonupon,{Hinterval*5-160,470},2,.1,WHITE);
+        DrawTextureEx(press_shadow,{Hinterval*5-160,470},2,.1,WHITE);
+
+    }
+    //---------------------------------------------------------
+    //⁡⁣⁣⁢⁡⁣⁣⁢𝗗𝗢𝗪𝗡 𝗕𝗨𝗧𝗧𝗢𝗡 𝗥𝗘𝗗𝗨𝗖𝗘𝗗 𝗧𝗜𝗠𝗘⁡
+    if(CheckCollisionPointCircle(mousepos,{3774,710},50)&&IsMouseButtonDown(MOUSE_BUTTON_LEFT)
+            && !eventTimerFlag)
+    {   
+        reducedTimeDays-=0.25;     //add a quarter day
+        reducedtimeallotment-=0.25;
+        if(!IsSoundPlaying(click))
+            PlaySound(click);
+        eventTimerFlag=true;
+        
+
+    }
+    if ((eventTimerFlag)&&(CheckCollisionPointCircle(mousepos,{3774,710},50)))
+    {
+        DrawTextureEx(buttondownon,{Hinterval*5-160,620},2,.1,WHITE);
+        DrawTextureEx(press_shadow,{Hinterval*5-160,620},2,.1,WHITE);
+
+    }
+
+
+
+
 
 
     //⁡⁣⁢⁣𝗥𝗶𝗴𝗵𝘁 𝗰𝗹𝗶𝗰𝗸--𝗮𝗱𝗱𝗶𝗻𝗴 𝗯𝗹𝗮𝗰𝗸𝗼𝘂𝘁 𝗱𝗮𝘁𝗲𝘀⁡
@@ -628,7 +707,7 @@ void Gridmaster::SaveCalendarToFile(const std::string& filename, const std::vect
 //******************************************************************************/
 
 //******************************************************************************/
-//                           ​‌‌‌‍⁡⁣⁢⁣‍𝕄𝕖𝕟𝕦 𝕊𝕖𝕣𝕧𝕖𝕣⁡​
+//                           ‍⁡⁣⁢⁣‍𝕄𝕖𝕟𝕦 𝕊𝕖𝕣𝕧𝕖𝕣⁡
 
 void Gridmaster::menuserver(void)
 {
@@ -1010,7 +1089,7 @@ void Gridmaster::reInitializeGrid()
     placeholder.designation=0;
     placeholder.value=0;
 
-    //⁡⁣⁢⁣​‌‍‌ℂℝ𝔼𝔸𝕋𝔼 𝕋ℍ𝔼 𝔻𝔸𝕐𝔾ℝ𝕀𝔻 𝕍𝔼ℂ𝕋𝕆ℝ 𝕀ℕ𝕀𝕋𝕀𝔸𝕃𝕀ℤ𝔼𝔻 𝕎𝕀𝕋ℍ 𝔻𝔼𝔽𝔸𝕌𝕃𝕋​⁡
+    //⁡⁣⁢⁣‍ℂℝ𝔼𝔸𝕋𝔼 𝕋ℍ𝔼 𝔻𝔸𝕐𝔾ℝ𝕀𝔻 𝕍𝔼ℂ𝕋𝕆ℝ 𝕀ℕ𝕀𝕋𝕀𝔸𝕃𝕀ℤ𝔼𝔻 𝕎𝕀𝕋ℍ 𝔻𝔼𝔽𝔸𝕌𝕃𝕋⁡
     dayGrid.clear();    //had to delete the items in the vector and rebuild
     dayGrid.resize(600, placeholder);  //this may have fixed the stack slamming exception
 
@@ -1058,8 +1137,24 @@ void Gridmaster::dashBoard(void)
 
 
 
+}
+//******************************************************************* */
 
+void Gridmaster::eventTimer()
+{
+    if (!eventTimerFlag)    //if no delay timer is going return
+        return;
 
+    stopwatch+=GetFrameTime();  //otherwise increment counter
 
+    if (stopwatch<0.4)     //check for the end and reset stopwatch if needed
+        return;
+    
+        else
+        {
+            stopwatch=0;
+            eventTimerFlag=false;
+        }
 
+    return;
 }

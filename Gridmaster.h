@@ -47,6 +47,8 @@ class Gridmaster
     static Font marker;
     static Font dot;
 
+    static Sound click;
+
     Texture2D buttonupon;
     Texture2D buttonupoff;
     Texture2D buttondownon;
@@ -63,6 +65,8 @@ class Gridmaster
     float reducedTimeDays=0;
     float initialVacation=totalVacation;
 
+    float stopwatch=0;
+
     std::string activeFileName="";
     int activeYear=2026;            //the default year for the calendar..functions to hold the year for the entire program
     int desiredyear=activeYear;     //changeable in create new calendar. Will reset both in merge
@@ -76,7 +80,13 @@ class Gridmaster
 
     float graphtimer=0;
     float menutimer=0;
+
     bool menuTimerFlag=false;
+    bool eventTimerFlag=false;
+    bool eventTimerFlag2=false;
+    bool eventTimerFlag3=false;
+    bool eventTimerFlag4=false;
+
     
     
     int colorindex=0;  //keep track of current circle color
@@ -124,6 +134,7 @@ class Gridmaster
     void reInitializeGrid(void);  //clear out the grid when creating a new year
     void SetPercentFTE(void);  //after adjusting FTE days, retally the allotment according to cal data
     void dashBoard(void);  //small graphic to show FTE percent and allotments
+    void eventTimer(); //pass the length of the delay. sets stopwatch value
 
 };
 
