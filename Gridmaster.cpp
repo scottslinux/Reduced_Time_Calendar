@@ -409,7 +409,7 @@ int Gridmaster::MouseCollision(Vector2 mousepos)
         DrawRectangleRec(dayGrid[contactedSquare].dayRect,Color{0,20,200,50});
         
 
-    std::cout<<"Mouse x: "<<GetMousePosition().x<<"  y: "<<GetMousePosition().y<<std::endl;
+    //std::cout<<"Mouse x: "<<GetMousePosition().x<<"  y: "<<GetMousePosition().y<<std::endl;
 
     return contactedSquare;
 
@@ -510,6 +510,7 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     {   
         fullTimeDays+=0.25;     //add a quarter day
         fulltimeallotment+=0.25;
+        totalVacation+=0.25;
         if(!IsSoundPlaying(click))
             PlaySound(click);
         eventTimerFlag=true;
@@ -531,6 +532,8 @@ void Gridmaster::mouseClickChoices(int gridIndex, Vector2 mousepos)
     {   
         fullTimeDays-=0.25;     //add a quarter day
         fulltimeallotment-=0.25;
+        totalVacation-=0.25;
+
         if(!IsSoundPlaying(click))
             PlaySound(click);
         eventTimerFlag=true;
@@ -550,6 +553,8 @@ if(CheckCollisionPointCircle(mousepos,{3774,560},50)&&IsMouseButtonDown(MOUSE_BU
     {   
         reducedTimeDays+=0.25;     //add a quarter day
         reducedtimeallotment+=0.25;
+        totalVacation+=0.25;
+
         if(!IsSoundPlaying(click))
             PlaySound(click);
         eventTimerFlag=true;
@@ -569,6 +574,8 @@ if(CheckCollisionPointCircle(mousepos,{3774,560},50)&&IsMouseButtonDown(MOUSE_BU
     {   
         reducedTimeDays-=0.25;     //add a quarter day
         reducedtimeallotment-=0.25;
+        totalVacation-=0.25;
+
         if(!IsSoundPlaying(click))
             PlaySound(click);
         eventTimerFlag=true;
@@ -778,8 +785,10 @@ if (!menuTimerFlag)
     }  
 }
 if(!menuTimerFlag)
-{
-    if (replaceMenuflag)
+{   std::string filenametest="./SavedCalendars/Reduced_time_"+(std::to_string(dayGrid[20].year))+".txt";
+
+    if (replaceMenuflag && std::filesystem::exists(filenametest))
+
          {
             //  ⁡⁣⁣⁢𝗨𝘀𝗶𝗻𝗴 𝘁𝗵𝗲 𝗠𝗲𝗻𝘂 𝗖𝗹𝗮𝘀𝘀 𝘁𝗼 𝗱𝗶𝘀𝗽𝗹𝗮𝘆 𝘀𝘂𝗯𝗺𝗲𝗻𝘂 𝗮𝗻𝗱 𝗳𝗶𝗲𝗹𝗱 𝘁𝗵𝗲 𝗿𝗲𝘀𝗽𝗼𝗻𝘀𝗲𝘀. 𝗘𝗹𝗶𝗺𝗶𝗻𝗮𝘁𝗲𝘀 𝗦𝘂𝗯𝗺𝗲𝗻𝘂𝗰𝗵𝗲𝗰𝗸𝗶𝗻𝗴 𝗺𝗲𝘁𝗵𝗼𝗱⁡
             //  ⁡⁣⁣⁢Appears and disappears with mainMenuflag boolean⁡
@@ -811,6 +820,17 @@ if(!menuTimerFlag)
             }
 
         }
+        else  
+        if (replaceMenuflag && !std::filesystem::exists(filenametest))  //file does not exist....just save it
+        {           
+                    menuDelay();
+                    mainMenuflag=true;  //turn main menu back on
+                    replaceMenuflag=false; //finished with replacemenu..turn it off
+                    std::cout<<"File did not exist...now it does!!!!!"<<std::endl;
+                    Gridmaster::SaveCalendarToFile(filenametest,dayGrid);
+        }
+
+
 }
 if (!menuTimerFlag)  //while the timer is running wait before new menu pops
 {
@@ -835,7 +855,7 @@ if (!menuTimerFlag) //while the timer is running wait before new menu pops
 {
     if (createCalflag)
     {
-        std::vector<std::string> futureyrs={"2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"};
+        std::vector<std::string> futureyrs={"2025","2026","2027","2028","2029","2030","2031","2032","2033","2034","2035"};
         int yearchosen=userMenu.displayMenu("Select Year",futureyrs,Vector2{Hinterval*4.3,1600},42);
 
         if(yearchosen !=0)  //user has chosen a year
@@ -843,7 +863,7 @@ if (!menuTimerFlag) //while the timer is running wait before new menu pops
             createCalflag=false;
             Gridmaster::menuDelay();
 
-            desiredyear=yearchosen+2025;
+            desiredyear=yearchosen+2024;
             menuDelay();
             mainMenuflag=true;
 
